@@ -32,4 +32,27 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+
+    //kotlinx coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.1'
+//retrofit for REST
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+//Moshi for type conversion
+    implementation 'com.squareup.retrofit2:converter-moshi:2.6.0'
+//recycler view
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+//dependency for viewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0-beta01"
+//android lifecycle
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
+    // UI
+    implementation "com.google.android.material:material:$rootProject.materialVersion"
+
+    // picasso for images
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

@@ -1,7 +1,8 @@
-package com.example.finalproject
+package com.example.finalproject.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.finalproject.R
 
 class MainActivity : AppCompatActivity() {
 
