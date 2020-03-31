@@ -3,7 +3,7 @@ package com.example.finalproject.Network
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-// api client for accessing deezer
+// api client for accessing themoviedb
 object ApiClient {
     const val BASE_URL = "https://api.themoviedb.org/3/"
 
