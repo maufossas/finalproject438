@@ -37,7 +37,18 @@ class SearchFragment : Fragment() {
             // Apply the adapter to the spinner
             languageSpinner.adapter = adapter
         }
-        languageSpinner.prompt = "Country"
+
+        ArrayAdapter.createFromResource(
+            this.context!!,
+            R.array.country_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            countrySpinner.adapter = adapter
+        }
+
     }
 
 }
