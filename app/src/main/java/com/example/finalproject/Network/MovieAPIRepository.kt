@@ -20,7 +20,7 @@ class MovieAPIRepository {
             withContext(Dispatchers.Main) {
                 try{
                     if(response.isSuccessful) {
-                     //   resBody.value = response.body()!!
+                        resBody.value = response.body()!!.results
                     }
                 } catch (e: HttpException) {
                     println("Http error")
@@ -36,7 +36,7 @@ class MovieAPIRepository {
             withContext(Dispatchers.Main) {
                 try{
                     if(response.isSuccessful) {
-                        //   resBody.value = response.body()!!
+                         resBody.value = response.body()!!.results
                     }
                 } catch (e: HttpException) {
                     println("Http error")
@@ -52,7 +52,7 @@ class MovieAPIRepository {
             withContext(Dispatchers.Main) {
                 try{
                     if(response.isSuccessful) {
-                        //   resBody.value = response.body()!!
+                         resBody.value = response.body()!!
                     }
                 } catch (e: HttpException) {
                     println("Http error")
@@ -63,12 +63,22 @@ class MovieAPIRepository {
 
     fun getByDiscover(resBody: MutableLiveData<List<Movie>>, lang : String, rating : String, region : String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = service.getByDiscover(lang, rating, region, API_KEY)
+            var args : String = ""
+            if (lang.isNotEmpty()){
+                args+= "&language=" + lang
+            }
+            if (rating.isNotEmpty()){
+                args+="&vote_average.gte=" + rating
+            }
+            if (region.isNotEmpty()){
+                args+="&region=" + region
+            }
+            val response = service.getByDiscover(args, API_KEY)
 
             withContext(Dispatchers.Main) {
                 try{
                     if(response.isSuccessful) {
-                        //   resBody.value = response.body()!!
+                        resBody.value = response.body()!!.results
                     }
                 } catch (e: HttpException) {
                     println("Http error")

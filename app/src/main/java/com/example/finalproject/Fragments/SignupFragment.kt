@@ -120,6 +120,14 @@ class SignupFragment : Fragment() {
         } else {
             fieldName.error = null
         }
+        val confirm = fieldPasswordConfirm.text.toString()
+        if (TextUtils.isEmpty(confirm)){
+            fieldPasswordConfirm.error="Required."
+            valid = false
+        }else if (!confirm.equals(password)){
+            fieldPasswordConfirm.error="Passwords must match."
+            valid = false
+        }
 
         return valid
     }

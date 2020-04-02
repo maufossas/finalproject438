@@ -25,12 +25,14 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:inputType="textPersonName"
             android:hint="Name"></EditText>
         <EditText
             android:id="@+id/fieldEmail"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:inputType="textEmailAddress"
             android:hint="Email"></EditText>
 
         <EditText
@@ -38,7 +40,16 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:inputType="textPassword"
             android:hint="Password"></EditText>
+
+        <EditText
+            android:id="@+id/fieldPasswordConfirm"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:inputType="textPassword"
+            android:hint="Confirm Password"></EditText>
 
         <Button
             android:id="@+id/signupButton"
