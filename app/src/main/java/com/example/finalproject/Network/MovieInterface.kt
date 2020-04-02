@@ -13,20 +13,19 @@ import retrofit2.http.Query
 interface MovieInterface {
 
     // for default loading in (home view), get by popular
-    @GET("trending/movie/{time_window}?api_key={api_key}")
+    @GET("trending/movie/{time_window}")
     suspend fun getByTrending(@Path("time_window") time : String,
-                              @Path("api_key") key : String): Response<MoviePayload>
+                              @Query("api_key") key : String): Response<MoviePayload>
 
-    @GET("search/movie?api_key={api_key}&query={search}")
-    suspend fun getBySearch(@Path("search") search : String, @Path("api_key") key : String) : Response<MoviePayload>
+    @GET("search/movie")
+    suspend fun getBySearch(@Query("api_key") key : String, @Query("query") search : String) : Response<MoviePayload>
 
-    @GET("movie/{movie_id}?api_key={api_key}")
+    @GET("movie/{movie_id}")
     suspend fun getByID(@Path("movie_id") movie : String,
-                        @Path("api_key") key : String) : Response<Movie>
+                        @Query("api_key") key : String) : Response<Movie>
 
-    @GET("discover/movie?api_key={api_key}{args}")
-    suspend fun getByDiscover(@Path("args") args: String,
-                              @Path("api_key") key : String) : Response<MoviePayload>
-
+    @GET("discover/movie{api_key}{args}")
+    suspend fun getByDiscover(@Path("api_key") key : String,
+                              @Path("args") args: String) : Response<MoviePayload>
 
 }

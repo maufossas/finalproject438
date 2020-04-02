@@ -13,9 +13,9 @@ class MovieAPIRepository {
     val API_KEY = "39e54ff6a343fcda519d85f9e57d967b"
 
     // all methods use coroutines to avoid making api requests on the main thread
-    fun getByTrending(resBody: MutableLiveData<List<Movie>>, time : String) {
+    fun getByTrending(resBody: MutableLiveData<List<Movie>>) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = service.getByTrending(time, API_KEY)
+            val response = service.getByTrending("day", API_KEY)
 
             withContext(Dispatchers.Main) {
                 try{
@@ -31,7 +31,7 @@ class MovieAPIRepository {
 
     fun getBySearch(resBody: MutableLiveData<List<Movie>>, time : String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = service.getByTrending(time, API_KEY)
+            val response = service.getByTrending(API_KEY, time)
 
             withContext(Dispatchers.Main) {
                 try{
@@ -73,7 +73,7 @@ class MovieAPIRepository {
             if (region.isNotEmpty()){
                 args+="&region=" + region
             }
-            val response = service.getByDiscover(args, API_KEY)
+            val response = service.getByDiscover("?api_key="+API_KEY, args)
 
             withContext(Dispatchers.Main) {
                 try{

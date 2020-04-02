@@ -1,0 +1,61 @@
+package com.example.finalproject.Adapters
+
+import android.content.Context
+import android.content.Intent
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.finalproject.Activities.SingleMovieActivity
+import com.example.finalproject.Data.Movie
+import com.example.finalproject.R
+import com.squareup.picasso.Picasso
+
+class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
+    RecyclerView.ViewHolder(inflater.inflate(R.layout.movie_item, parent, false)) {
+    private val picture : ImageView
+    private val title : TextView
+    private val moviePath = "https://image.tmdb.org/t/p/w500"
+
+    init {
+        picture = itemView.findViewById(R.id.moviePoster)
+        title = itemView.findViewById(R.id.movieTitle)
+    }
+
+    fun bind(movie: Movie, context: Context) {
+        title.text = movie.title
+        if (movie.poster_path.isNotEmpty()){
+            // if the picture link exists, load it in
+            Picasso.get().load(moviePath + movie.poster_path).into(picture)
+        }
+        picture.setOnClickListener{
+            // launch the song activity to view more details
+            val intent = Intent(context, SingleMovieActivity::class.java)
+            intent.putExtra("id", movie.id)
+            context.startActivity(intent)
+        }
+    }
+}
+
+//create the listener for the recycler view
+class MovieListAdapter(private val list: ArrayList<Movie>?, var context: Context) : RecyclerView.Adapter<MovieViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return MovieViewHolder(
+            inflater,
+            parent
+        )
+    }
+
+    //bind the object
+    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+        val event: Movie = list!!.get(position)
+        holder.bind(event, context)
+    }
+
+    //set the count
+    override fun getItemCount(): Int = list!!.size
+
+}
