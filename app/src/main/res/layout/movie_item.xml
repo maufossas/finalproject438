@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:id="@+id/layoutToClick">
 
     <ImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:id="@+id/moviePoster"/>
+        android:id="@+id/moviePoster"
+        android:layout_width="120dp"
+        android:layout_height="120dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/movieTitle"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp">
+
+        <TextView
+            android:id="@+id/movieTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10pt"
+            android:text="movieTitle"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/movieReleaseDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ReleaseDate"
+            android:textSize="7pt"/>
+    </LinearLayout>
 
 </LinearLayout>

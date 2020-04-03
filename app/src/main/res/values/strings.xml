@@ -5,6 +5,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="languages_array">
+        <item>Original Language</item>
         <item>Afrikaans</item>
         <item>Albanian</item>
         <item>Arabic</item>
@@ -68,6 +69,7 @@
     </string-array>
 
     <string-array name="country_array">
+        <item>Country of Origin</item>
          <item>Afghanistan</item>
          <item>Åland Islands</item>
          <item>Albania</item>
@@ -324,6 +326,15 @@
          <item>Zambia</item>
          <item>Zimbabwe</item>
 
+    </string-array>
+
+    <string-array name="ratings_array">
+        <item>Rating</item>
+        <item>5 stars</item>
+        <item>4 stars</item>
+        <item>3 stars</item>
+        <item>2 stars</item>
+        <item>1 star</item>
     </string-array>
 
 

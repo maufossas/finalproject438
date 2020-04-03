@@ -38,7 +38,9 @@
             android:id="@+id/titleSearch"
             android:hint="Title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textSize="7pt"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchRecyclerView"

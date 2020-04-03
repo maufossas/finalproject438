@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalproject.APIViewModel
 import com.example.finalproject.Adapters.MovieListAdapter
 import com.example.finalproject.Data.Movie
@@ -39,7 +40,7 @@ class TrendingFragment : Fragment() {
         val recyclerView = trendingRecyclerView
         val movieAdapter = MovieListAdapter(movieList, this.context!!)
         recyclerView.adapter = movieAdapter
-        recyclerView.layoutManager = GridLayoutManager(this.context, 2)
+        recyclerView.layoutManager = LinearLayoutManager(this.context)
 
         // gets trending movies from API
         viewModel.getByTrending()

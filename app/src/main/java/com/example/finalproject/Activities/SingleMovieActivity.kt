@@ -45,6 +45,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
         Picasso.get().load(moviePath + movie.poster_path).into(singleMoviePoster)
         singleMovieTitle.text = movie.title
         singleMovieDate.text = movie.release_date
+        singleMovieSummary.text = movie.overview
 
     }
 }
