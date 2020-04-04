@@ -68,7 +68,7 @@
     </string-array>
 
     <string-array name="language_abbreviations">
-        <item>If they choose this we will display a random language</item>
+        <item>en</item>
         <item>af</item>
         <item>sq</item>
         <item>ar</item>

@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.fragment_trending.*
 class SearchFragment : Fragment() {
 
     lateinit var viewModel: APIViewModel
-
     var movieList: ArrayList<Movie> = ArrayList()
 
     var country: String = ""
@@ -62,25 +61,6 @@ class SearchFragment : Fragment() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Apply the adapter to the spinner
             languageSpinner.adapter = adapter
-
-            languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    language = resources.getStringArray(R.array.language_abbreviations)[position].toString()
-                    //TODO: figure out why this is not displaying
-                    viewModel.getByDiscover(language, rating, country)
-                    //To verify Toast.makeText(parent!!.context, language, Toast.LENGTH_LONG).show()
-                    alertAdapterOfChange(movieAdapter)
-                }
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    //I don't think we have to do anything here.
-                }
-            }
         }
 
         ArrayAdapter.createFromResource(
@@ -103,6 +83,28 @@ class SearchFragment : Fragment() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Apply the adapter to the spinner
             ratingSpinner.adapter = adapter
+        }
+
+        //Listener for our spinner
+        languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                language = resources.getStringArray(R.array.language_abbreviations)[position].toString()
+                //TODO: figure out why this is not displaying; it has something to do with how the API call is being made it is not fetching anything
+                //This does not work:
+                viewModel.getByDiscover(language, rating, country)
+                //This will work:
+                //viewModel.getByTrending()
+                alertAdapterOfChange(movieAdapter)
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                //I don't think we have to do anything here.
+            }
         }
 
     }
