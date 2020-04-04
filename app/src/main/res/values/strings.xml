@@ -41,7 +41,6 @@
         <item>Malayalam</item>
         <item>Maltese</item>
         <item>Norwegian</item>
-        <item>Norwegian</item>
         <item>Polish</item>
         <item>Portuguese</item>
         <item>Punjabi</item>
@@ -51,7 +50,7 @@
         <item>Serbian</item>
         <item>Slovak</item>
         <item>Slovenian</item>
-        <item>Sorbian</item>
+        <item>Serbian</item>
         <item>Spanish</item>
         <item>Swedish</item>
         <item>Thai</item>
@@ -66,6 +65,69 @@
         <item>Xhosa</item>
         <item>Yiddish</item>
         <item>Zulu</item>
+    </string-array>
+
+    <string-array name="language_abbreviations">
+        <item>If they choose this we will display a random language</item>
+        <item>af</item>
+        <item>sq</item>
+        <item>ar</item>
+        <item>eu</item>
+        <item>be</item>
+        <item>bg</item>
+        <item>ca</item>
+        <item>cn</item>
+        <item>hr</item>
+        <item>cs</item>
+        <item>da</item>
+        <item>nl</item>
+        <item>en</item>
+        <item>et</item>
+        <item>fo</item>
+        <item>fa</item>
+        <item>fi</item>
+        <item>fr</item>
+        <item>el</item>
+        <item>he</item>
+        <item>hi</item>
+        <item>hu</item>
+        <item>is</item>
+        <item>id</item>
+        <item>ga</item>
+        <item>it</item>
+        <item>ja</item>
+        <item>ko</item>
+        <item>ku</item>
+        <item>lv</item>
+        <item>lt</item>
+        <item>mk</item>
+        <item>ml</item>
+        <item>mt</item>
+        <item>nn</item>
+        <item>pl</item>
+        <item>pt</item>
+        <item>pa</item>
+        <item>it</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>sr</item>
+        <item>sk</item>
+        <item>sl</item>
+        <item>sr</item>
+        <item>es</item>
+        <item>sv</item>
+        <item>th</item>
+        <item>ts</item>
+        <item>tn</item>
+        <item>tr</item>
+        <item>uk</item>
+        <item>ur</item>
+        <item>ve</item>
+        <item>vi</item>
+        <item>cy</item>
+        <item>xh</item>
+        <item>yi</item>
+        <item>zu</item>
     </string-array>
 
     <string-array name="country_array">

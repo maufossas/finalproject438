@@ -7,13 +7,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.finalproject.APIViewModel
+import com.example.finalproject.Adapters.MovieListAdapter
+import com.example.finalproject.Data.Movie
 
 import com.example.finalproject.R
 import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.android.synthetic.main.fragment_trending.*
 
 
 class SearchFragment : Fragment() {
+
+    lateinit var viewModel: APIViewModel
+
+    var movieList: ArrayList<Movie> = ArrayList()
+
+    var country: String = ""
+    var language: String = ""
+    var rating: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +43,15 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // api viewmodel
+        viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
+
+        // set up recycler view with grid layout adapter
+        val recyclerView = searchRecyclerView
+        val movieAdapter = MovieListAdapter(movieList, this.context!!)
+        recyclerView.adapter = movieAdapter
+        recyclerView.layoutManager = LinearLayoutManager(this.context)
+
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
             this.context!!,
@@ -36,6 +62,25 @@ class SearchFragment : Fragment() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Apply the adapter to the spinner
             languageSpinner.adapter = adapter
+
+            languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    language = resources.getStringArray(R.array.language_abbreviations)[position].toString()
+                    //TODO: figure out why this is not displaying
+                    viewModel.getByDiscover(language, rating, country)
+                    //To verify Toast.makeText(parent!!.context, language, Toast.LENGTH_LONG).show()
+                    alertAdapterOfChange(movieAdapter)
+                }
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    //I don't think we have to do anything here.
+                }
+            }
         }
 
         ArrayAdapter.createFromResource(
@@ -60,6 +105,15 @@ class SearchFragment : Fragment() {
             ratingSpinner.adapter = adapter
         }
 
+    }
+
+    //Function to alert change whenever the user types in a title or filters by rating, language, or country.
+    private fun alertAdapterOfChange(movieAdpater : MovieListAdapter) {
+        viewModel.movieList.observe(viewLifecycleOwner, Observer {
+            movieList.clear()
+            movieList.addAll(it)
+            movieAdpater.notifyDataSetChanged()
+        })
     }
 
 }

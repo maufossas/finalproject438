@@ -65,7 +65,7 @@ class MovieAPIRepository {
         CoroutineScope(Dispatchers.IO).launch {
             var args : String = ""
             if (lang.isNotEmpty()){
-                args+= "&language=" + lang
+                args+= "&with_original_language=" + lang
             }
             if (rating.isNotEmpty()){
                 args+="&vote_average.gte=" + rating
