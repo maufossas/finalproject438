@@ -24,8 +24,7 @@ interface MovieInterface {
     suspend fun getByID(@Path("movie_id") movie : String,
                         @Query("api_key") key : String) : Response<Movie>
 
-    @GET("discover/movie{api_key}{args}")
-    suspend fun getByDiscover(@Path("api_key") key : String,
-                              @Path("args") args: String) : Response<MoviePayload>
+    @GET("discover/movie")
+    suspend fun getByDiscover(@Query("api_key") args: String) : Response<MoviePayload>
 
 }
