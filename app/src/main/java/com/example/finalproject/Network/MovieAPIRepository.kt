@@ -63,17 +63,18 @@ class MovieAPIRepository {
 
     fun getByDiscover(resBody: MutableLiveData<List<Movie>>, lang : String, rating : String, region : String) {
         CoroutineScope(Dispatchers.IO).launch {
-            var args : String = API_KEY
+            var map = HashMap<String, String>()
+            map.put("api_key", API_KEY)
             if (lang.isNotEmpty()){
-                args+= "&with_original_language=" + lang
+                map.put("with_original_language", lang)
             }
             if (rating.isNotEmpty()){
-                args+="&vote_average.gte=" + rating
+                map.put("vote_average.gte", rating)
             }
             if (region.isNotEmpty()){
-                args+="&region=" + region
+                map.put("region", region)
             }
-            val response = service.getByDiscover(args)
+            val response = service.getByDiscover(map)
 
             withContext(Dispatchers.Main) {
                 try{

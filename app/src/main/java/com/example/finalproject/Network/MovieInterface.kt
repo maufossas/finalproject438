@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 // interface to denote the different api calls made
 interface MovieInterface {
@@ -25,6 +26,6 @@ interface MovieInterface {
                         @Query("api_key") key : String) : Response<Movie>
 
     @GET("discover/movie")
-    suspend fun getByDiscover(@Query("api_key") args: String) : Response<MoviePayload>
+    suspend fun getByDiscover(@QueryMap args: Map<String, String>) : Response<MoviePayload>
 
 }

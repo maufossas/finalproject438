@@ -96,21 +96,12 @@ class SearchFragment : Fragment() {
                 //If they don't choose the "original language" option.
                 if(position != 0){
                     language = resources.getStringArray(R.array.language_abbreviations)[position].toString()
-                    //TODO: figure out why this is not displaying; it has something to do with how the API call is being made it is not fetching anything
-                    //This will work:
-                    //viewModel.getByTrending()
-                    //This will also work:
-                    //viewModel.getByDiscover("en","","")
-                    //But this does not work:
                     viewModel.getByDiscover(language, rating, country)
                     alertAdapterOfChange(movieAdapter)
-                    //For testing purposes:
-                    //Toast.makeText(parent!!.context, language, Toast.LENGTH_LONG).show()
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                //I don't think we have to do anything here.
+                //Nothing
             }
         }
 
@@ -126,14 +117,12 @@ class SearchFragment : Fragment() {
                 if(position != 0){
                     //TODO: see how countries are formatted for the API call.
                     //country = resources.getStringArray(R.array.country_array)[position].toString()
-                    //This does not work:
                     viewModel.getByDiscover(language, rating, country)
                     alertAdapterOfChange(movieAdapter)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                //I don't think we have to do anything here.
+                //Nothing
             }
         }
 
