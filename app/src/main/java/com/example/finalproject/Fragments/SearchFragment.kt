@@ -1,7 +1,5 @@
 package com.example.finalproject.Fragments
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,13 +18,17 @@ import com.example.finalproject.Data.Movie
 
 import com.example.finalproject.R
 import kotlinx.android.synthetic.main.fragment_search.*
-import kotlinx.android.synthetic.main.fragment_trending.*
 
 
 class SearchFragment : Fragment() {
 
     lateinit var viewModel: APIViewModel
+    //This is going to be our movie list for filtering by country or year
     var movieList: ArrayList<Movie> = ArrayList()
+    //This will be our movie list for filtering by title
+    //var movieListByTitle: ArrayList<Movie> = ArrayList()
+    //This will be the joint movie list, and the results that will be displayed:
+    //var finalMovieList: ArrayList<Movie> = ArrayList()
 
     var year: String = ""
     var language: String = ""
@@ -99,11 +100,11 @@ class SearchFragment : Fragment() {
                 if(position != 0){
                     language = resources.getStringArray(R.array.language_abbreviations)[position].toString()
                     viewModel.getByDiscover(language, rating, year)
-                    alertAdapterOfChange(movieAdapter)
+                    changeInFilter(movieAdapter)
                 } else{
                     language = ""
                     viewModel.getByDiscover(language, rating, year)
-                    alertAdapterOfChange(movieAdapter)
+                    changeInFilter(movieAdapter)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -121,14 +122,13 @@ class SearchFragment : Fragment() {
             ) {
                 //If they don't choose the "original language" option.
                 if(position != 0){
-                    //TODO: see how countries are formatted for the API call.
                     year = resources.getStringArray(R.array.year_array)[position].toString()
                     viewModel.getByDiscover(language, rating, year)
-                    alertAdapterOfChange(movieAdapter)
+                    changeInFilter(movieAdapter)
                 } else{
                     year = ""
                     viewModel.getByDiscover(language, rating, year)
-                    alertAdapterOfChange(movieAdapter)
+                    changeInFilter(movieAdapter)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -147,23 +147,44 @@ class SearchFragment : Fragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if(titleSearch.text.toString().length != 0){
                     viewModel.getBySearch(titleSearch.text.toString())
-                    alertAdapterOfChange(movieAdapter)
+                    changeInFilter(movieAdapter)
                 } else {
                     viewModel.getByDiscover(language, rating, year)
-                    alertAdapterOfChange(movieAdapter)
+                    //movieListByTitle.clear()
+                    changeInFilter(movieAdapter)
                 }
             }
         })
 
     }
 
-    //Function to alert change whenever the user types in a title or filters by rating, language, or year.
-    private fun alertAdapterOfChange(movieAdpater : MovieListAdapter) {
+    //Function to alert change whenever the user types in a title or filters by language, or year.
+    private fun changeInFilter(movieAdpater : MovieListAdapter) {
         viewModel.movieList.observe(viewLifecycleOwner, Observer {
             movieList.clear()
             movieList.addAll(it)
             movieAdpater.notifyDataSetChanged()
+            //combineLists(movieAdpater)
         })
     }
+
+    /*
+    private fun changeInTitle(movieAdpater : MovieListAdapter) {
+        viewModel.movieList.observe(viewLifecycleOwner, Observer {
+            movieListByTitle.clear()
+            movieListByTitle.addAll(it)
+            combineLists(movieAdpater)
+        })
+    }
+
+    private fun combineLists(movieAdapter : MovieListAdapter){
+        if(movieListByTitle.isEmpty()){
+            finalMovieList = movieList
+        } else{
+            finalMovieList = ArrayList(movieList.intersect(movieListByTitle).toTypedArray().asList())
+        }
+        movieAdapter.notifyDataSetChanged()
+    }
+     */
 
 }
