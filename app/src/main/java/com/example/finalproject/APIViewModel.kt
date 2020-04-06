@@ -29,8 +29,8 @@ class APIViewModel(application: Application): AndroidViewModel(application) {
         movieAPIRepository.getByID(movie, id)
     }
 
-    fun getByDiscover(lang: String, rating: String, region: String){
-        movieAPIRepository.getByDiscover(movieList, lang, rating, region)
+    fun getByDiscover(lang: String, rating: String, year: String){
+        movieAPIRepository.getByDiscover(movieList, lang, rating, year)
     }
 
 }

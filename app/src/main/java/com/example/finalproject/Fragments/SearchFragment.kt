@@ -3,6 +3,8 @@ package com.example.finalproject.Fragments
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +29,7 @@ class SearchFragment : Fragment() {
     lateinit var viewModel: APIViewModel
     var movieList: ArrayList<Movie> = ArrayList()
 
-    var country: String = ""
+    var year: String = ""
     var language: String = ""
     var rating: String = ""
 
@@ -65,13 +67,13 @@ class SearchFragment : Fragment() {
 
         ArrayAdapter.createFromResource(
             this.context!!,
-            R.array.country_array,
+            R.array.year_array,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Apply the adapter to the spinner
-            countrySpinner.adapter = adapter
+            yearSpinner.adapter = adapter
         }
 
         ArrayAdapter.createFromResource(
@@ -96,7 +98,11 @@ class SearchFragment : Fragment() {
                 //If they don't choose the "original language" option.
                 if(position != 0){
                     language = resources.getStringArray(R.array.language_abbreviations)[position].toString()
-                    viewModel.getByDiscover(language, rating, country)
+                    viewModel.getByDiscover(language, rating, year)
+                    alertAdapterOfChange(movieAdapter)
+                } else{
+                    language = ""
+                    viewModel.getByDiscover(language, rating, year)
                     alertAdapterOfChange(movieAdapter)
                 }
             }
@@ -105,8 +111,8 @@ class SearchFragment : Fragment() {
             }
         }
 
-        //Listener for country spinner
-        countrySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        //Listener for year spinner
+        yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -116,8 +122,12 @@ class SearchFragment : Fragment() {
                 //If they don't choose the "original language" option.
                 if(position != 0){
                     //TODO: see how countries are formatted for the API call.
-                    //country = resources.getStringArray(R.array.country_array)[position].toString()
-                    viewModel.getByDiscover(language, rating, country)
+                    year = resources.getStringArray(R.array.year_array)[position].toString()
+                    viewModel.getByDiscover(language, rating, year)
+                    alertAdapterOfChange(movieAdapter)
+                } else{
+                    year = ""
+                    viewModel.getByDiscover(language, rating, year)
                     alertAdapterOfChange(movieAdapter)
                 }
             }
@@ -126,9 +136,28 @@ class SearchFragment : Fragment() {
             }
         }
 
+        //Listener for our textbox
+        titleSearch.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+                //DO NOTHING
+            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                //DO NOTHING
+            }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if(titleSearch.text.toString().length != 0){
+                    viewModel.getBySearch(titleSearch.text.toString())
+                    alertAdapterOfChange(movieAdapter)
+                } else {
+                    viewModel.getByDiscover(language, rating, year)
+                    alertAdapterOfChange(movieAdapter)
+                }
+            }
+        })
+
     }
 
-    //Function to alert change whenever the user types in a title or filters by rating, language, or country.
+    //Function to alert change whenever the user types in a title or filters by rating, language, or year.
     private fun alertAdapterOfChange(movieAdpater : MovieListAdapter) {
         viewModel.movieList.observe(viewLifecycleOwner, Observer {
             movieList.clear()

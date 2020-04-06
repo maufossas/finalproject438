@@ -29,9 +29,9 @@ class MovieAPIRepository {
         }
     }
 
-    fun getBySearch(resBody: MutableLiveData<List<Movie>>, time : String) {
+    fun getBySearch(resBody: MutableLiveData<List<Movie>>, title : String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = service.getByTrending(API_KEY, time)
+            val response = service.getBySearch(API_KEY, title)
 
             withContext(Dispatchers.Main) {
                 try{
@@ -61,7 +61,7 @@ class MovieAPIRepository {
         }
     }
 
-    fun getByDiscover(resBody: MutableLiveData<List<Movie>>, lang : String, rating : String, region : String) {
+    fun getByDiscover(resBody: MutableLiveData<List<Movie>>, lang : String, rating : String, year : String) {
         CoroutineScope(Dispatchers.IO).launch {
             var map = HashMap<String, String>()
             map.put("api_key", API_KEY)
@@ -71,8 +71,8 @@ class MovieAPIRepository {
             if (rating.isNotEmpty()){
                 map.put("vote_average.gte", rating)
             }
-            if (region.isNotEmpty()){
-                map.put("region", region)
+            if (year.isNotEmpty()){
+                map.put("primary_release_year", year)
             }
             val response = service.getByDiscover(map)
 
