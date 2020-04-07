@@ -61,6 +61,27 @@ class MovieAPIRepository {
         }
     }
 
+    fun getByIDList(resBody: MutableLiveData<List<Movie>>, ids: ArrayList<String>){
+        CoroutineScope(Dispatchers.IO).launch {
+            val list = ArrayList<Movie>()
+            for (id in ids){
+                val response = service.getByID(id, API_KEY)
+                if (response.isSuccessful){
+                    list.add(response.body()!!)
+                }
+            }
+            withContext(Dispatchers.Main) {
+                try{
+                    if(list.size > 0) {
+                        resBody.value = list
+                    }
+                } catch (e: HttpException) {
+                    println("Http error")
+                }
+            }
+        }
+    }
+
     fun getByDiscover(resBody: MutableLiveData<List<Movie>>, lang : String, rating : String, year : String) {
         CoroutineScope(Dispatchers.IO).launch {
             var map = HashMap<String, String>()
