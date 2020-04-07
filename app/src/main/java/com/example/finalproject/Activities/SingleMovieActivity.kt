@@ -1,5 +1,6 @@
 package com.example.finalproject.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -38,6 +39,12 @@ class SingleMovieActivity() :  AppCompatActivity() {
         // if they cancel, stop the activity
         singleMovieCancelButton.setOnClickListener {
             finish()
+        }
+
+        writeReviewButton.setOnClickListener {
+            val intent = Intent(this, ReviewActivity::class.java)
+            intent.putExtra("id", movie.id);
+            startActivity(intent)
         }
     }
 

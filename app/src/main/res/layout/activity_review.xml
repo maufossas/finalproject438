@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.ReviewActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/OverallReviewHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Review"
+            android:gravity="center"
+            android:textSize="15pt"/>
+        <TextView
+            android:id="@+id/ratingHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rating:"
+            android:textSize="8pt"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+        <Spinner
+            android:id="@+id/ratingSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+        <TextView
+            android:id="@+id/reviewHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Review:"
+            android:textSize="8pt"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+        <EditText
+            android:id="@+id/reviewInput"
+            android:hint="Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textSize="7pt"
+            android:lines="10"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancelBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cancel" />
+
+            <Button
+                android:id="@+id/submitReviewBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Submit Review" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
