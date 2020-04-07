@@ -31,7 +31,7 @@ class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     fun bind(movie: Movie, context: Context) {
         title.text = movie.title
         releaseDate.text = movie.release_date
-        if (movie.poster_path != "null" && movie.poster_path.isNotEmpty()){
+        if (movie.poster_path != null && movie.poster_path.isNotEmpty()){
             // if the picture link exists, load it in
             Picasso.get().load(moviePath + movie.poster_path).into(picture)
         }
