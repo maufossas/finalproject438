@@ -646,11 +646,11 @@
 
     <string-array name="ratings_array">
         <item>Rating</item>
-        <item>5 stars</item>
-        <item>4 stars</item>
-        <item>3 stars</item>
-        <item>2 stars</item>
         <item>1 star</item>
+        <item>2 stars</item>
+        <item>3 stars</item>
+        <item>4 stars</item>
+        <item>5 stars</item>
     </string-array>
 
     <string-array name="year_array">

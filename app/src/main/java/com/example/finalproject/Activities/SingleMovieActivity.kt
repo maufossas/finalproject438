@@ -58,9 +58,16 @@ class SingleMovieActivity() :  AppCompatActivity() {
             finish()
         }
 
+        seeReviewsButton.setOnClickListener {
+            val intent = Intent(this, ListOfReviewsActivity::class.java)
+            intent.putExtra("id", movie.id)
+            intent.putExtra("title", movie.title)
+            startActivity(intent)
+        }
+
         writeReviewButton.setOnClickListener {
             val intent = Intent(this, ReviewActivity::class.java)
-            intent.putExtra("id", movie.id);
+            intent.putExtra("id", movie.id)
             startActivity(intent)
         }
     }
