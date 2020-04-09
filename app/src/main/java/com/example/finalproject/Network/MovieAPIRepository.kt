@@ -82,15 +82,12 @@ class MovieAPIRepository {
         }
     }
 
-    fun getByDiscover(resBody: MutableLiveData<List<Movie>>, lang : String, rating : String, year : String) {
+    fun getByDiscover(resBody: MutableLiveData<List<Movie>>, lang : String, year : String) {
         CoroutineScope(Dispatchers.IO).launch {
             var map = HashMap<String, String>()
             map.put("api_key", API_KEY)
             if (lang.isNotEmpty()){
                 map.put("with_original_language", lang)
-            }
-            if (rating.isNotEmpty()){
-                map.put("vote_average.gte", rating)
             }
             if (year.isNotEmpty()){
                 map.put("primary_release_year", year)

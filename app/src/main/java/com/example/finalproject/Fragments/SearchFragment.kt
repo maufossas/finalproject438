@@ -1,5 +1,6 @@
 package com.example.finalproject.Fragments
 
+import android.icu.text.Transliterator
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,7 +18,12 @@ import com.example.finalproject.Adapters.MovieListAdapter
 import com.example.finalproject.Data.Movie
 
 import com.example.finalproject.R
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import kotlinx.android.synthetic.main.activity_list_of_reviews.*
 import kotlinx.android.synthetic.main.fragment_search.*
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 
 class SearchFragment : Fragment() {
@@ -29,6 +35,8 @@ class SearchFragment : Fragment() {
     //var movieListByTitle: ArrayList<Movie> = ArrayList()
     //This will be the joint movie list, and the results that will be displayed:
     //var finalMovieList: ArrayList<Movie> = ArrayList()
+    private lateinit var db: FirebaseFirestore
+
 
     var year: String = ""
     var language: String = ""
@@ -40,6 +48,16 @@ class SearchFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        db = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+            .setTimestampsInSnapshotsEnabled(true)
+            .build()
+        db.setFirestoreSettings(settings)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,11 +117,56 @@ class SearchFragment : Fragment() {
                 //If they don't choose the "original language" option.
                 if(position != 0){
                     language = resources.getStringArray(R.array.language_abbreviations)[position].toString()
-                    viewModel.getByDiscover(language, rating, year)
+                    viewModel.getByDiscover(language,year)
                     changeInFilter(movieAdapter)
                 } else{
                     language = ""
-                    viewModel.getByDiscover(language, rating, year)
+                    viewModel.getByDiscover(language, year)
+                    changeInFilter(movieAdapter)
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                //Nothing
+            }
+        }
+
+        //Listener for rating spinner
+        ratingSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                //If they don't choose the "Rating" option.
+                if(position != 0){
+                    viewModel.getByDiscover(language, year)
+
+
+                    viewModel.movieList.observe(viewLifecycleOwner, Observer {
+                        movieList.clear()
+                        var tempList: ArrayList<Movie> = ArrayList()
+                        for(movie in it){
+                            db.collection("movies").document(movie.id.toString()).get().addOnSuccessListener {
+                                //If our document exists
+                                if(it.exists()){
+                                    if(it.contains("ratings")){
+                                        var ratingList = it.get("ratings") as ArrayList<Int>
+                                        var bd = BigDecimal.valueOf(ratingList.average())
+                                        bd = bd.setScale(2, RoundingMode.HALF_UP);
+                                        System.out.println("bd: " + bd)
+                                        if( (bd.toDouble() >= (position.toDouble() - 0.5)) && (bd.toDouble() < (position.toDouble() - 0.5))){
+                                            tempList.add(movie)
+                                        }
+                                    }}}
+                        }
+                        System.out.println("TempList: " + tempList)
+                        movieList.addAll(tempList)
+                        movieAdapter.notifyDataSetChanged()
+                        //combineLists(movieAdpater)
+                    })
+                } else{
+                    viewModel.getByDiscover(language, year)
                     changeInFilter(movieAdapter)
                 }
             }
@@ -123,11 +186,11 @@ class SearchFragment : Fragment() {
                 //If they don't choose the "original language" option.
                 if(position != 0){
                     year = resources.getStringArray(R.array.year_array)[position].toString()
-                    viewModel.getByDiscover(language, rating, year)
+                    viewModel.getByDiscover(language, year)
                     changeInFilter(movieAdapter)
                 } else{
                     year = ""
-                    viewModel.getByDiscover(language, rating, year)
+                    viewModel.getByDiscover(language, year)
                     changeInFilter(movieAdapter)
                 }
             }
@@ -149,7 +212,7 @@ class SearchFragment : Fragment() {
                     viewModel.getBySearch(titleSearch.text.toString())
                     changeInFilter(movieAdapter)
                 } else {
-                    viewModel.getByDiscover(language, rating, year)
+                    viewModel.getByDiscover(language, year)
                     //movieListByTitle.clear()
                     changeInFilter(movieAdapter)
                 }
