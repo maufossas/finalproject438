@@ -41,18 +41,22 @@ class ListOfReviewsActivity : AppCompatActivity() {
         movieReviewsTitle.text = movieTitle
 
         val recyclerView = findViewById<RecyclerView>(R.id.reviewsRecyclerView)
-        val reviewAdapter = ReviewListAdapter(reviewList)
-        recyclerView.adapter = reviewAdapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+
 
         db.collection("movies").document(movieId.toString()).get().addOnSuccessListener {
             //If our document exists
             if(it.exists()){
                 if(it.contains("reviews")){
                     reviewList = it.get("reviews") as ArrayList<String>
+                    val reviewAdapter = ReviewListAdapter(reviewList)
+                    recyclerView.adapter = reviewAdapter
+                    recyclerView.layoutManager = LinearLayoutManager(this)
                     reviewAdapter.notifyDataSetChanged()
                 } else{
                     reviewList.add("This movie does not yet have any reviews")
+                    val reviewAdapter = ReviewListAdapter(reviewList)
+                    recyclerView.adapter = reviewAdapter
+                    recyclerView.layoutManager = LinearLayoutManager(this)
                     reviewAdapter.notifyDataSetChanged()
                 }
                 //Create the reviews array

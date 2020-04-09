@@ -107,6 +107,7 @@ class ReviewActivity : AppCompatActivity() {
                     addRating()
                 }
             }
+            finish()
         }
     }
 
@@ -140,7 +141,6 @@ class ReviewActivity : AppCompatActivity() {
                     Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                 }
             }
-            finish()
         }
     }
 
@@ -174,7 +174,6 @@ class ReviewActivity : AppCompatActivity() {
                     Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                 }
             }
-            finish()
         }
     }
 
