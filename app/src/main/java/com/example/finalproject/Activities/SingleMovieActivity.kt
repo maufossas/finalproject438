@@ -73,7 +73,12 @@ class SingleMovieActivity() :  AppCompatActivity() {
     }
 
     private fun loadInMovie(){
-        Picasso.get().load(moviePath + movie.poster_path).into(singleMoviePoster)
+        if (movie.poster_path != null && movie.poster_path.isNotEmpty()){
+            // if the picture link exists, load it in
+            Picasso.get().load(moviePath + movie.poster_path).into(singleMoviePoster)
+        }else{
+            singleMoviePoster.setImageResource(R.drawable.no_poster)
+        }
         singleMovieTitle.text = movie.title
         singleMovieDate.text = movie.release_date
         singleMovieSummary.text = movie.overview

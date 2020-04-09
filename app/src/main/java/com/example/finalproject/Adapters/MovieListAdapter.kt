@@ -34,6 +34,8 @@ class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         if (movie.poster_path != null && movie.poster_path.isNotEmpty()){
             // if the picture link exists, load it in
             Picasso.get().load(moviePath + movie.poster_path).into(picture)
+        }else{
+            picture.setImageResource(R.drawable.no_poster)
         }
         clickLayout.setOnClickListener{
             // launch the movie activity to view more details
