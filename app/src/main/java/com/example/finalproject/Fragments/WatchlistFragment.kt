@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalproject.APIViewModel
 import com.example.finalproject.Adapters.MovieListAdapter
+import com.example.finalproject.Adapters.WatchlistAdapter
 import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
 
@@ -21,10 +22,11 @@ import kotlinx.android.synthetic.main.fragment_watchlist.*
 class WatchlistFragment : Fragment() {
 
     private var movieList = ArrayList<Movie>()
+    private var movieIDs = ArrayList<String>()
     lateinit var viewModel : APIViewModel
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
-    private lateinit var adapter : MovieListAdapter
+    private lateinit var adapter : WatchlistAdapter
 
 
     override fun onCreateView(
@@ -48,7 +50,7 @@ class WatchlistFragment : Fragment() {
             .build()
         db.setFirestoreSettings(settings)
 
-        adapter = MovieListAdapter(movieList, this.context!!)
+        adapter = WatchlistAdapter(movieList, this.context!!, this)
 
         watchlistRecyclerView.adapter = adapter
         watchlistRecyclerView.layoutManager = LinearLayoutManager(this.context)
@@ -59,6 +61,8 @@ class WatchlistFragment : Fragment() {
             if (it.contains("watchlist")){
                 val ids = it.get("watchlist") as ArrayList<String>
                 if (ids.size > 0){
+                    movieIDs.clear()
+                    movieIDs.addAll(ids)
                     viewModel.getByIDList(ids)
                     viewModel.movieList.observe(this, Observer {
                         movieList.clear()
@@ -70,10 +74,14 @@ class WatchlistFragment : Fragment() {
         }
     }
 
-    fun deleteMovie(movie: Movie) {
-        // delete from db
-        adapter.notifyDataSetChanged()
+    fun deleteMovie(movie: Movie){
+        // only do 1 call if removed (should prevent spamming the button)
+        if(movieList.remove(movie)){
+            val uid = auth.currentUser!!.email!!
+            movieIDs.remove(movie.id.toString())
+            db.collection("users").document(uid).update("watchlist", movieIDs)
+            adapter.notifyDataSetChanged()
+        }
     }
-
 
 }

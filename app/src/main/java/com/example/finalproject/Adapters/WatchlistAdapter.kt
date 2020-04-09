@@ -1,5 +1,6 @@
 package com.example.finalproject.Adapters
 
+import android.widget.Button
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -10,25 +11,28 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.finalproject.Activities.SingleMovieActivity
 import com.example.finalproject.Data.Movie
+import com.example.finalproject.Fragments.WatchlistFragment
 import com.example.finalproject.R
 import com.squareup.picasso.Picasso
 
-class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
-    RecyclerView.ViewHolder(inflater.inflate(R.layout.movie_item, parent, false)) {
+class WatchlistViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
+    RecyclerView.ViewHolder(inflater.inflate(R.layout.watchlist_movie_item, parent, false)) {
     private val picture : ImageView
     private val title : TextView
     private val releaseDate: TextView
     private val clickLayout: LinearLayout
     private val moviePath = "https://image.tmdb.org/t/p/w500"
+    private val removeButton: Button
 
     init {
         picture = itemView.findViewById(R.id.moviePoster)
         title = itemView.findViewById(R.id.movieTitle)
         releaseDate = itemView.findViewById(R.id.movieReleaseDate)
         clickLayout = itemView.findViewById(R.id.layoutToClick)
+        removeButton = itemView.findViewById(R.id.removeButton)
     }
 
-    fun bind(movie: Movie, context: Context) {
+    fun bind(movie: Movie, context: Context, frag: WatchlistFragment) {
         title.text = movie.title
         releaseDate.text = movie.release_date
         if (movie.poster_path != null && movie.poster_path.isNotEmpty()){
@@ -41,24 +45,29 @@ class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             intent.putExtra("id", movie.id)
             context.startActivity(intent)
         }
+
+        removeButton.setOnClickListener {
+            frag.deleteMovie(movie)
+        }
+
     }
 }
 
 //create the listener for the recycler view
-class MovieListAdapter(private val list: ArrayList<Movie>?, var context: Context) : RecyclerView.Adapter<MovieViewHolder>() {
+class WatchlistAdapter(private val list: ArrayList<Movie>?, var context: Context, var frag : WatchlistFragment) : RecyclerView.Adapter<WatchlistViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WatchlistViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return MovieViewHolder(
+        return WatchlistViewHolder(
             inflater,
             parent
         )
     }
 
     //bind the object
-    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: WatchlistViewHolder, position: Int) {
         val event: Movie = list!!.get(position)
-        holder.bind(event, context)
+        holder.bind(event, context, frag)
     }
 
     //set the count
