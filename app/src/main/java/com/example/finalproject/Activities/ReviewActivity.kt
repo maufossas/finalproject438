@@ -148,28 +148,60 @@ class ReviewActivity : AppCompatActivity() {
         db.collection("movies").document(movie.id.toString()).get().addOnSuccessListener {
             //If our document exists
             if(it.exists()){
-                if(it.contains("ratings")){
-                    val list = it.get("ratings") as ArrayList<Int>
-                    list.add(ratingForMovie)
-                    db.collection("movies").document(movie.id.toString()).update("ratings", list)
+                if(it.contains("ratingsSum") && it.contains("numOfRatings") && it.contains("ratingsAvg")){
+                    var sum = it.get("ratingsSum") as Long
+                    var numOfRatings = it.get("numOfRatings") as Long
+                    numOfRatings++
+                    sum += ratingForMovie
+                    var avg = sum/numOfRatings
+                    db.collection("movies").document(movie.id.toString())
+                        .update("ratingsSum", sum)
+                        .addOnSuccessListener {
+                            //Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
+                        }
+                    db.collection("movies").document(movie.id.toString())
+                        .update("numOfRatings", numOfRatings)
+                        .addOnSuccessListener {
+                            //Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
+                        }
+                    db.collection("movies").document(movie.id.toString())
+                        .update("ratingsAvg", avg)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                         }
+
                 }
                 //Create the reviews array
                 else{
-                    val list = ArrayList<Int>()
-                    list.add(ratingForMovie)
-                    db.collection("movies").document(movie.id.toString()).update("ratings", list)
+                    var sum = ratingForMovie
+                    var numOfRatings = 1
+                    var avg = ratingForMovie
+                    db.collection("movies").document(movie.id.toString())
+                        .update("ratingsSum", sum)
+                        .addOnSuccessListener {
+                            //Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
+                        }
+                    db.collection("movies").document(movie.id.toString())
+                        .update("numOfRatings", numOfRatings)
+                        .addOnSuccessListener {
+                            //Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
+                        }
+                    db.collection("movies").document(movie.id.toString())
+                        .update("ratingsAvg", avg)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                         }
                 }
             } else{
-                val list = ArrayList<Int>()
-                list.add(ratingForMovie)
-                var map = HashMap<String, ArrayList<Int>>()
-                map.put("ratings", list)
+                var sum = ratingForMovie
+                var numOfRatings = 1
+                var avg = ratingForMovie
+
+                var map = HashMap<String, Any>()
+                map.put("ratingsSum", sum)
+                map.put("numOfRatings",numOfRatings)
+                map.put("ratingsAvg", numOfRatings)
+
                 db.collection("movies").document(movie.id.toString()).set(map as Map<String, Any>).addOnSuccessListener {
                     Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                 }

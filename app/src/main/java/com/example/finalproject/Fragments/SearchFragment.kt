@@ -149,20 +149,23 @@ class SearchFragment : Fragment() {
                         for(movie in it){
                             db.collection("movies").document(movie.id.toString()).get().addOnSuccessListener {
                                 //If our document exists
-                                if(it.exists()){
-                                    if(it.contains("ratings")){
+                                if (it.exists()) {
+                                    if (it.contains("ratings")) {
                                         var ratingList = it.get("ratings") as ArrayList<Int>
                                         var bd = BigDecimal.valueOf(ratingList.average())
                                         bd = bd.setScale(2, RoundingMode.HALF_UP);
                                         System.out.println("bd: " + bd)
-                                        if( (bd.toDouble() >= (position.toDouble() - 0.5)) && (bd.toDouble() < (position.toDouble() - 0.5))){
+                                        if ((bd.toDouble() >= (position.toDouble() - 0.5)) && (bd.toDouble() < (position.toDouble() - 0.5))) {
                                             tempList.add(movie)
+                                            movieList.addAll(tempList)
+                                            movieAdapter.notifyDataSetChanged()
                                         }
-                                    }}}
+                                    }
+                                }
+                            }
                         }
                         System.out.println("TempList: " + tempList)
-                        movieList.addAll(tempList)
-                        movieAdapter.notifyDataSetChanged()
+
                         //combineLists(movieAdpater)
                     })
                 } else{
@@ -218,7 +221,6 @@ class SearchFragment : Fragment() {
                 }
             }
         })
-
     }
 
     //Function to alert change whenever the user types in a title or filters by language, or year.

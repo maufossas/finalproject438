@@ -20,7 +20,7 @@ class ListOfReviewsActivity : AppCompatActivity() {
 
     private lateinit var db: FirebaseFirestore
     var reviewList : ArrayList<String> = ArrayList<String>()
-    var ratingList : ArrayList<Int> = ArrayList<Int>()
+    var rating : Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,11 +60,9 @@ class ListOfReviewsActivity : AppCompatActivity() {
                     reviewAdapter.notifyDataSetChanged()
                 }
                 //Create the reviews array
-                if(it.contains("ratings")){
-                    ratingList = it.get("ratings") as ArrayList<Int>
-                    var bd = BigDecimal.valueOf(ratingList.average())
-                    bd = bd.setScale(2, RoundingMode.HALF_UP);
-                    averageRating.text = "Average rating: " + bd.toString()
+                if(it.contains("ratingsAvg")){
+                    rating = it.get("ratingsAvg") as Long
+                    averageRating.text = "Average rating: " + rating.toString() + " Stars"
                 }
             }
         }
