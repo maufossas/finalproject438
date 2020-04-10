@@ -200,7 +200,8 @@ class ReviewActivity : AppCompatActivity() {
                 var map = HashMap<String, Any>()
                 map.put("ratingsSum", sum)
                 map.put("numOfRatings",numOfRatings)
-                map.put("ratingsAvg", numOfRatings)
+                map.put("ratingsAvg", avg)
+                map.put("id", movie.id)
 
                 db.collection("movies").document(movie.id.toString()).set(map as Map<String, Any>).addOnSuccessListener {
                     Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()

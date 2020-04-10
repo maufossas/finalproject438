@@ -138,45 +138,37 @@ class SearchFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                //If they don't choose the "Rating" option.
-                if(position != 0){
-                    viewModel.getByDiscover(language, year)
+                //If they don't choose the "rating" option.
+                if (position != 0) {
 
+                    db.collection("movies").whereEqualTo("ratingsAvg", position)
+                        .get().addOnSuccessListener {
+                            var tempList: ArrayList<String> = ArrayList()
 
-                    viewModel.movieList.observe(viewLifecycleOwner, Observer {
-                        movieList.clear()
-                        var tempList: ArrayList<Movie> = ArrayList()
-                        for(movie in it){
-                            db.collection("movies").document(movie.id.toString()).get().addOnSuccessListener {
-                                //If our document exists
-                                if (it.exists()) {
-                                    if (it.contains("ratings")) {
-                                        var ratingList = it.get("ratings") as ArrayList<Int>
-                                        var bd = BigDecimal.valueOf(ratingList.average())
-                                        bd = bd.setScale(2, RoundingMode.HALF_UP);
-                                        System.out.println("bd: " + bd)
-                                        if ((bd.toDouble() >= (position.toDouble() - 0.5)) && (bd.toDouble() < (position.toDouble() - 0.5))) {
-                                            tempList.add(movie)
-                                            movieList.addAll(tempList)
-                                            movieAdapter.notifyDataSetChanged()
-                                        }
-                                    }
+                            for (movie in it) {
+                                if (movie.contains("id")) {
+                                    var id = movie.get("id") as Long
+                                    tempList.add(id.toString())
                                 }
                             }
-                        }
-                        System.out.println("TempList: " + tempList)
 
-                        //combineLists(movieAdpater)
-                    })
-                } else{
-                    viewModel.getByDiscover(language, year)
-                    changeInFilter(movieAdapter)
+                            if (tempList.size > 0) {
+                                viewModel.getByIDList(tempList)
+                            }
+                            viewModel.movieList.observe(viewLifecycleOwner, Observer {
+                                movieList.clear()
+                                movieList.addAll(it)
+                                movieAdapter.notifyDataSetChanged()
+                            })
+                        }
                 }
+
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 //Nothing
             }
         }
+
 
         //Listener for year spinner
         yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
