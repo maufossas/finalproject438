@@ -95,7 +95,7 @@ class ReviewActivity : AppCompatActivity() {
         } else{
             //Then it means that they only added a written review, no text
             if(ratingForMovie == -1){
-                addReview()
+                addReview(false)
             } else{
                 //Means that they only added a rating, and no review
                 if(reviewInput.text.toString() == ""){
@@ -103,15 +103,14 @@ class ReviewActivity : AppCompatActivity() {
                 }
                 //Means that they added both a review and rating
                 else{
-                    addReview()
-                    addRating()
+                    addReview(true)
                 }
             }
             finish()
         }
     }
 
-    private fun addReview(){
+    private fun addReview(withRating : Boolean){
         db.collection("movies").document(movie.id.toString()).get().addOnSuccessListener {
             //If our document exists
             if(it.exists()){
@@ -141,6 +140,9 @@ class ReviewActivity : AppCompatActivity() {
                     Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                 }
             }
+            if(withRating){
+                addRating()
+            }
         }
     }
 
@@ -167,7 +169,7 @@ class ReviewActivity : AppCompatActivity() {
                     db.collection("movies").document(movie.id.toString())
                         .update("ratingsAvg", avg)
                         .addOnSuccessListener {
-                            Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Rating added!", Toast.LENGTH_SHORT).show()
                         }
 
                 }
@@ -189,7 +191,7 @@ class ReviewActivity : AppCompatActivity() {
                     db.collection("movies").document(movie.id.toString())
                         .update("ratingsAvg", avg)
                         .addOnSuccessListener {
-                            Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Rating added!", Toast.LENGTH_SHORT).show()
                         }
                 }
             } else{
@@ -204,7 +206,7 @@ class ReviewActivity : AppCompatActivity() {
                 map.put("id", movie.id)
 
                 db.collection("movies").document(movie.id.toString()).set(map as Map<String, Any>).addOnSuccessListener {
-                    Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Rating added!", Toast.LENGTH_SHORT).show()
                 }
             }
         }
