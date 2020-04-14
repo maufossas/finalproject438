@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.finalproject.APIViewModel
 import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_review.*
@@ -24,6 +25,7 @@ class ReviewActivity : AppCompatActivity() {
     var ratingForMovie = -1
 
     private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +55,8 @@ class ReviewActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
+        auth = FirebaseAuth.getInstance()
 
         val apiViewModel = ViewModelProvider(this).get(APIViewModel::class.java)
 
@@ -85,25 +89,62 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         submitReviewBtn.setOnClickListener {
-            submitReview()
+            verifyPrevious()
         }
     }
 
-    private fun submitReview(){
+    private fun verifyPrevious(){
+        var notReviewedBefore = true
+        var notRatedBefore = true
+        db.collection("users").document(auth.currentUser!!.email!!).get().addOnSuccessListener {
+            if(it.contains("reviewedMovies")){
+                val reviewedMovies = it.get("reviewedMovies") as ArrayList<Int>
+                reviewedMovies.forEach { i ->
+                    if(movie.id == i){
+                        notReviewedBefore = false
+                    }
+                }
+            }
+            if(it.contains("ratedMovies")){
+                val ratedMovies = it.get("ratedMovies") as ArrayList<Int>
+                ratedMovies.forEach { i ->
+                    if(movie.id == i){
+                        notRatedBefore = false
+                    }
+                }
+            }
+            submitReview(notReviewedBefore, notRatedBefore)
+        }
+    }
+
+    private fun submitReview(notReviewedBefore : Boolean, notRatedBefore : Boolean){
         if(ratingForMovie == -1 && reviewInput.text.toString() == ""){
             Toast.makeText(this, "Nothing to submit, please rate or review the movie.", Toast.LENGTH_LONG).show()
         } else{
             //Then it means that they only added a written review, no text
             if(ratingForMovie == -1){
-                addReview(false)
+                if(notReviewedBefore){
+                    addReview(false)
+                } else{
+                    Toast.makeText(this, "Sorry, you have already reviewed this movie", Toast.LENGTH_LONG).show()
+                }
             } else{
                 //Means that they only added a rating, and no review
                 if(reviewInput.text.toString() == ""){
-                    addRating()
+                    if(notRatedBefore){
+                        addRating()
+                    } else {
+                        Toast.makeText(this, "Sorry, you have already rated this movie", Toast.LENGTH_LONG).show()
+                    }
                 }
                 //Means that they added both a review and rating
                 else{
-                    addReview(true)
+                    if(notRatedBefore && notReviewedBefore){
+                        addReview(true)
+                        finish()
+                    } else{
+                        Toast.makeText(this, "Sorry, you have already rated or reviewed this movie", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
             finish()
@@ -143,6 +184,7 @@ class ReviewActivity : AppCompatActivity() {
             if(withRating){
                 addRating()
             }
+            associateReviewToUser()
         }
     }
 
@@ -208,6 +250,49 @@ class ReviewActivity : AppCompatActivity() {
                 db.collection("movies").document(movie.id.toString()).set(map as Map<String, Any>).addOnSuccessListener {
                     Toast.makeText(this, "Rating added!", Toast.LENGTH_SHORT).show()
                 }
+            }
+            associateRatingToUser()
+        }
+    }
+
+    private fun associateRatingToUser(){
+        val uid = auth.currentUser!!.email!!
+        db.collection("users").document(uid).get().addOnSuccessListener {
+            if(it.contains("ratedMovies")){
+                val ratedMovies = it.get("ratedMovies") as ArrayList<Int>
+                ratedMovies.add(movie.id)
+                db.collection("users").document(uid).update("ratedMovies", ratedMovies)
+                    .addOnSuccessListener {
+                        println("Associated rating with user")
+                    }
+            } else{
+                val ratedMovie = ArrayList<Int>()
+                ratedMovie.add(movie.id)
+                db.collection("users").document(uid).update("ratedMovies", ratedMovie)
+                    .addOnSuccessListener {
+                        println("Successfully added to user")
+                    }
+            }
+        }
+    }
+
+    private fun associateReviewToUser(){
+        val uid = auth.currentUser!!.email!!
+        db.collection("users").document(uid).get().addOnSuccessListener {
+            if(it.contains("reviewedMovies")){
+                val reviewedMovies = it.get("reviewedMovies") as ArrayList<Int>
+                reviewedMovies.add(movie.id)
+                db.collection("users").document(uid).update("reviewedMovies", reviewedMovies)
+                    .addOnSuccessListener {
+                        println("Associated review with user")
+                    }
+            } else{
+                val reviewedMovie = ArrayList<Int>()
+                reviewedMovie.add(movie.id)
+                db.collection("users").document(uid).update("reviewedMovies", reviewedMovie)
+                    .addOnSuccessListener {
+                        println("Successfully added to user")
+                    }
             }
         }
     }

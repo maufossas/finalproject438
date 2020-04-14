@@ -9,7 +9,7 @@ import com.example.finalproject.Fragments.*
 class MovieTabsAdapter(fm: FragmentManager): FragmentPagerAdapter(fm) {
 
     override fun getCount(): Int {
-        return 3
+        return 4
     }
 
     override fun getItem(position: Int): Fragment {
@@ -23,6 +23,9 @@ class MovieTabsAdapter(fm: FragmentManager): FragmentPagerAdapter(fm) {
             2 -> {
                 WatchlistFragment();
             }
+            3 -> {
+                AccountInfoFragment();
+            }
             else -> null!!
         }
     }
@@ -32,6 +35,7 @@ class MovieTabsAdapter(fm: FragmentManager): FragmentPagerAdapter(fm) {
             0 -> "Trending"
             1 -> "Search"
             2 -> "Watchlist"
+            3 -> "Account"
             else -> {
                 return ""
             }
