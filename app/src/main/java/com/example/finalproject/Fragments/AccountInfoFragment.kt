@@ -22,6 +22,7 @@ class AccountInfoFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private var numReviews = 0
     private var numRatings = 0
+    private var name = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,16 +35,13 @@ class AccountInfoFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        auth = FirebaseAuth.getInstance()
+
         db = FirebaseFirestore.getInstance()
         val settings = FirebaseFirestoreSettings.Builder()
             .setTimestampsInSnapshotsEnabled(true)
             .build()
         db.setFirestoreSettings(settings)
-
-        auth = FirebaseAuth.getInstance()
-
-        //TODO: figure out why this is not working/displaying the users name
-        accountName.text = "Hello, " + FirebaseAuth.getInstance().currentUser!!.displayName!!
 
         db.collection("users").document(auth.currentUser!!.email!!).get().addOnSuccessListener {
             if(it.contains("ratedMovies")){
@@ -54,8 +52,13 @@ class AccountInfoFragment : Fragment() {
                 val reviews = it.get("reviewedMovies") as ArrayList<Int>
                 numReviews = reviews.size
             }
+            if(it.contains("Name")){
+                val person = it.get("Name") as String
+                name = person
+            }
             ratedMovies.text = "You have rated " + numRatings + " movies"
             reviewedMovies.text = "You have reviewed " + numReviews + " movies"
+            accountName.text = "Hello, " + name
         }
 
     }

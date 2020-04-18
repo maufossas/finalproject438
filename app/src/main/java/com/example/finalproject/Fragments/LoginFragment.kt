@@ -51,7 +51,7 @@ class LoginFragment : Fragment() {
             val intent = Intent(this.context, MoviesActivity::class.java)
             startActivity(intent)
         }
-
+        
         loginButton.setOnClickListener{signIn()}
     }
 
