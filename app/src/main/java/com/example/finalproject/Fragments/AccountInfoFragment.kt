@@ -8,12 +8,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import com.example.finalproject.APIViewModel
+import com.example.finalproject.Activities.LookForFavoritesActivity
 import com.example.finalproject.Activities.MainActivity
 
 import com.example.finalproject.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_account_info.*
 
 class AccountInfoFragment : Fragment() {
@@ -56,16 +60,62 @@ class AccountInfoFragment : Fragment() {
                 val person = it.get("Name") as String
                 name = person
             }
+            if(it.contains("Favorites")){
+                val favoriteMovies = it.get("Favorites") as ArrayList<String>
+                val howMany = favoriteMovies.size
+                if(howMany == 3){
+                    addMoviesMessage.text = " Your favorite movies: "
+                }
+                addMoviePosters(favoriteMovies)
+            }
             ratedMovies.text = "You have rated " + numRatings + " movies"
             reviewedMovies.text = "You have reviewed " + numReviews + " movies"
             accountName.text = "Hello, " + name
         }
 
+        firstFavorite.setOnClickListener {
+            updateFavorite(0)
+        }
+
+        secondFavorite.setOnClickListener{
+            updateFavorite(1)
+        }
+
+        thirdFavorite.setOnClickListener {
+            updateFavorite(2)
+        }
+    }
+
+    private fun updateFavorite(poster : Int){
+        var intent = Intent(this.context, LookForFavoritesActivity::class.java)
+        intent.putExtra("posterToUpdate", poster)
+        startActivity(intent)
+    }
+
+    private fun addMoviePosters(favoriteMovies : ArrayList<String>){
+        //Loads movie posters into image view
+        for(i in 0 until favoriteMovies.size){
+            if(i == 0){
+                if(favoriteMovies[i] != null && favoriteMovies[i].isNotEmpty()) {
+                    Picasso.get().load("https://image.tmdb.org/t/p/w500" + favoriteMovies[i]).into(firstFavorite)
+                }
+            }
+            if(i == 1){
+                if(favoriteMovies[i] != null && favoriteMovies[i].isNotEmpty()) {
+                    Picasso.get().load("https://image.tmdb.org/t/p/w500" + favoriteMovies[i]).into(secondFavorite)
+                }
+            }
+            if(i == 2){
+                if(favoriteMovies[i] != null && favoriteMovies[i].isNotEmpty()) {
+                    Picasso.get().load("https://image.tmdb.org/t/p/w500" + favoriteMovies[i]).into(thirdFavorite)
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        //Buttons for adding favorite images
 
         //Button to logout
         LogoutButton.setOnClickListener {
@@ -73,8 +123,6 @@ class AccountInfoFragment : Fragment() {
             val intent = Intent(this.context, MainActivity::class.java)
             startActivity(intent)
         }
-
-
     }
 
 }

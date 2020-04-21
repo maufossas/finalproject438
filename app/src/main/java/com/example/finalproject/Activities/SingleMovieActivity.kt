@@ -2,6 +2,7 @@ package com.example.finalproject.Activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -21,6 +22,9 @@ class SingleMovieActivity() :  AppCompatActivity() {
     private val moviePath = "https://image.tmdb.org/t/p/w500"
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
+
+    //For adding favorite movies:
+    var posterToUpdate = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +53,26 @@ class SingleMovieActivity() :  AppCompatActivity() {
             movie = it
             loadInMovie()
         })
+
+        posterToUpdate = intent.getIntExtra("posterToUpdate", -1)
+        //Then we sent a request to update our favorite list
+        if(posterToUpdate != -1){
+            singleMovieCancelButton.text = "Cancel"
+            seeReviewsButton.visibility = View.GONE
+            addToWatchlistButton.visibility = View.GONE
+            writeReviewButton.visibility = View.GONE
+            addToFavoritesButton.visibility = View.VISIBLE
+        } else{
+            singleMovieCancelButton.text = "Back to home"
+            seeReviewsButton.visibility = View.VISIBLE
+            addToWatchlistButton.visibility = View.VISIBLE
+            writeReviewButton.visibility = View.VISIBLE
+            addToFavoritesButton.visibility = View.GONE
+        }
+
+        addToFavoritesButton.setOnClickListener {
+            addOrUpdateFavorites()
+        }
 
         addToWatchlistButton.setOnClickListener {
             addToWatchlist()
@@ -82,6 +106,53 @@ class SingleMovieActivity() :  AppCompatActivity() {
         singleMovieTitle.text = movie.title
         singleMovieDate.text = movie.release_date
         singleMovieSummary.text = movie.overview
+    }
+
+    private fun addOrUpdateFavorites(){
+        val uid = auth.currentUser!!.email!!
+        db.collection("users").document(uid).get().addOnSuccessListener {
+            if (it.exists()) {
+                if (it.contains("Favorites")) {
+                    val list = it.get("Favorites") as ArrayList<String>
+                    //They are expanding the size of their favorites.
+                    if(list.size - 1 < posterToUpdate) {
+                        list.add(movie.poster_path)
+                    } else{
+                        list[posterToUpdate] = movie.poster_path
+                    }
+                    db.collection("users").document(uid).update("Favorites", list)
+                        .addOnSuccessListener {
+                            val toast = Toast.makeText(
+                                this,
+                                "Favorites updated!",
+                                Toast.LENGTH_SHORT
+                            )
+                            toast.show()
+                        }
+                } else {
+                    val list = ArrayList<String>()
+                    list.add(movie.poster_path)
+                    db.collection("users").document(uid).update("Favorites", list)
+                        .addOnSuccessListener {
+                            val toast =
+                                Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT)
+                            toast.show()
+                        }
+                }
+            }else{
+                val list = ArrayList<String>()
+                list.add(movie.poster_path)
+                var map = HashMap<String, ArrayList<String>>()
+                map.put("Favorites", list)
+                db.collection("users").document(uid).set(map as Map<String, Any>).addOnSuccessListener {
+                    val toast =
+                        Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT)
+                    toast.show()
+                }
+            }
+            var intent = Intent(this, MoviesActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun addToWatchlist(){

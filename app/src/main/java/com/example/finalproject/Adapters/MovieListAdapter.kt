@@ -28,7 +28,7 @@ class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         clickLayout = itemView.findViewById(R.id.layoutToClick)
     }
 
-    fun bind(movie: Movie, context: Context) {
+    fun bind(movie: Movie, context: Context, posterToUpdate: Int) {
         title.text = movie.title
         releaseDate.text = movie.release_date
         if (movie.poster_path != null && movie.poster_path.isNotEmpty()){
@@ -41,13 +41,14 @@ class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             // launch the movie activity to view more details
             val intent = Intent(context, SingleMovieActivity::class.java)
             intent.putExtra("id", movie.id)
+            intent.putExtra("posterToUpdate", posterToUpdate)
             context.startActivity(intent)
         }
     }
 }
 
 //create the listener for the recycler view
-class MovieListAdapter(private val list: ArrayList<Movie>?, var context: Context) : RecyclerView.Adapter<MovieViewHolder>() {
+class MovieListAdapter(private val list: ArrayList<Movie>?, var context: Context, var posterToUpdate: Int) : RecyclerView.Adapter<MovieViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -60,7 +61,7 @@ class MovieListAdapter(private val list: ArrayList<Movie>?, var context: Context
     //bind the object
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val event: Movie = list!!.get(position)
-        holder.bind(event, context)
+        holder.bind(event, context, posterToUpdate)
     }
 
     //set the count

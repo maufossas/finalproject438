@@ -31,6 +31,48 @@
         android:textSize="15dp">
     </TextView>
 
+    <TextView
+        android:id="@+id/addMoviesMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        android:textSize="17dp"
+        android:text=" Click to add your favorite movies:"></TextView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15px"
+        android:layout_marginRight="15px"
+        >
+        <ImageView
+            android:id="@+id/firstFavorite"
+            android:layout_weight=".30"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:layout_marginRight="10px"
+            android:layout_marginLeft="10px"
+            android:src="@drawable/no_poster"/>
+        <ImageView
+            android:id="@+id/secondFavorite"
+            android:layout_weight=".30"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:layout_marginLeft="10px"
+            android:src="@drawable/no_poster"
+            android:layout_marginRight="10px" />
+        <ImageView
+            android:id="@+id/thirdFavorite"
+            android:layout_weight=".30"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:layout_marginLeft="10px"
+            android:src="@drawable/no_poster"
+            android:layout_marginRight="10px" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/LogoutButton"
         android:layout_width="wrap_content"

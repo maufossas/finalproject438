@@ -68,7 +68,7 @@ class SearchFragment : Fragment() {
 
         // set up recycler view with grid layout adapter
         val recyclerView = searchRecyclerView
-        val movieAdapter = MovieListAdapter(movieList, this.context!!)
+        val movieAdapter = MovieListAdapter(movieList, this.context!!, -1)
         recyclerView.adapter = movieAdapter
         recyclerView.layoutManager = LinearLayoutManager(this.context)
 

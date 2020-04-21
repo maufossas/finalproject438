@@ -86,6 +86,13 @@
             android:text="Add to watchlist"
             android:id="@+id/addToWatchlistButton"/>
 
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Add to favorites"
+            android:id="@+id/addToFavoritesButton"/>
+
     </LinearLayout>
 
     <Button
