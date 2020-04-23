@@ -147,8 +147,8 @@ class SearchFragment : Fragment() {
 
                             for (movie in it) {
                                 if (movie.contains("id")) {
-                                    var id = movie.get("id") as Int
-                                    tempList.add(id)
+                                    var id = movie.get("id") as Long
+                                    tempList.add(id.toInt())
                                 }
                             }
 
