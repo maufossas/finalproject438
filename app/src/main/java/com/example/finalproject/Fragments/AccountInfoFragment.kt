@@ -123,8 +123,8 @@ class AccountInfoFragment : Fragment() {
                 }
                 if (favorites.size > 0){
                     val viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
-                    viewModel.getByIDList(favorites)
-                    viewModel.movieList.observe(this, Observer {
+                    viewModel.getThirdIDList(favorites)
+                    viewModel.thirdMovieList.observe(this, Observer {
                         posters.clear()
                         for (movie in it){
                             posters.add(movie.poster_path)

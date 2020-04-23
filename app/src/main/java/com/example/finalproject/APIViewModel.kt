@@ -13,6 +13,7 @@ class APIViewModel(application: Application): AndroidViewModel(application) {
     var movie: MutableLiveData<Movie> = MutableLiveData()
     var movieList: MutableLiveData<List<Movie>> = MutableLiveData()
     var secondMovieList : MutableLiveData<List<Movie>> = MutableLiveData()
+    var thirdMovieList : MutableLiveData<List<Movie>> = MutableLiveData()
 
     // functions to access things from the repository
     fun getByTrending() {
@@ -33,6 +34,10 @@ class APIViewModel(application: Application): AndroidViewModel(application) {
 
     fun getSecondIDList(ids: ArrayList<Int>){
         movieAPIRepository.getByIDList(secondMovieList, ids)
+    }
+
+    fun getThirdIDList(ids : ArrayList<Int>){
+        movieAPIRepository.getByIDList(thirdMovieList, ids)
     }
 
     fun getByDiscover(lang: String, year: String){
