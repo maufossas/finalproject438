@@ -9,9 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalproject.APIViewModel
 import com.example.finalproject.Activities.LookForFavoritesActivity
 import com.example.finalproject.Activities.SingleMovieActivity
+import com.example.finalproject.Adapters.ReviewedMovieAdapter
+import com.example.finalproject.Adapters.WatchlistAdapter
+import com.example.finalproject.Data.Movie
 
 import com.example.finalproject.R
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_account_info.*
+import kotlinx.android.synthetic.main.fragment_watchlist.*
 
 class AccountInfoFragment : Fragment() {
 
@@ -29,6 +34,8 @@ class AccountInfoFragment : Fragment() {
     private var name = ""
     private var favorites = ArrayList<Int>()
     private var posters = ArrayList<String>()
+    private var reviewed = ArrayList<Movie>()
+    private lateinit var adapter : ReviewedMovieAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +57,11 @@ class AccountInfoFragment : Fragment() {
         db.setFirestoreSettings(settings)
 
         loadData()
+
+        adapter = ReviewedMovieAdapter(reviewed, this.context!!)
+
+        reviewedRecyclerView.adapter = adapter
+        reviewedRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
 
         firstFavorite.setOnClickListener {
             updateFavorite(0)
@@ -75,6 +87,13 @@ class AccountInfoFragment : Fragment() {
             }
             if(it.contains("reviewedMovies")){
                 val reviews = it.get("reviewedMovies") as ArrayList<Int>
+                val viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
+                viewModel.getByIDList(reviews)
+                viewModel.movieList.observe(this, Observer {
+                    reviewed.clear()
+                    reviewed.addAll(it)
+                    adapter.notifyDataSetChanged()
+                })
                 numReviews = reviews.size
             }
             if(it.contains("Name")){
