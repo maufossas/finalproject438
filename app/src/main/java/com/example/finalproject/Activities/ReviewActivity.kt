@@ -19,7 +19,8 @@ import kotlinx.android.synthetic.main.fragment_search.ratingSpinner
 
 class ReviewActivity : AppCompatActivity() {
 
-    private lateinit var movie: Movie
+    private var id = 0
+    private var title = ""
 
     var ratingForMovie = -1
 
@@ -30,6 +31,7 @@ class ReviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_review)
 
+        // create list of rating options (1-5 stars)
         ArrayAdapter.createFromResource(
             this,
             R.array.ratings_array,
@@ -41,15 +43,13 @@ class ReviewActivity : AppCompatActivity() {
             ratingSpinner.adapter = adapter
         }
 
+        // set up firebase
         db = FirebaseFirestore.getInstance()
         val settings = FirebaseFirestoreSettings.Builder()
             .setTimestampsInSnapshotsEnabled(true)
             .build()
         db.setFirestoreSettings(settings)
 
-        cancelBtn.setOnClickListener {
-            finish();
-        }
     }
 
     override fun onStart() {
@@ -57,17 +57,13 @@ class ReviewActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        val apiViewModel = ViewModelProvider(this).get(APIViewModel::class.java)
+        // get important data from intent
+        id = intent.getIntExtra("id", -1)
+        title = intent.getStringExtra("title")!!
 
-        val id = intent.getIntExtra("id", -1)
+        OverallReviewHeader.text = "Review for " + title
 
-        apiViewModel.getByID(id)
-
-        apiViewModel.movie.observe(this, Observer {
-            movie = it
-            OverallReviewHeader.text = "Review for " + movie.title
-        })
-
+        // set rating selector
         ratingSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -87,11 +83,18 @@ class ReviewActivity : AppCompatActivity() {
             }
         }
 
+        // no review submitted
+        cancelBtn.setOnClickListener {
+            finish()
+        }
+
+        // ensure review is valid
         submitReviewBtn.setOnClickListener {
             verifyPrevious()
         }
     }
 
+    // prevents user from submitting multiple reviews and ratings
     private fun verifyPrevious(){
         var notReviewedBefore = true
         var notRatedBefore = true
@@ -99,7 +102,7 @@ class ReviewActivity : AppCompatActivity() {
             if(it.contains("reviewedMovies")){
                 val reviewedMovies = it.get("reviewedMovies") as ArrayList<Int>
                 reviewedMovies.forEach { i ->
-                    if(movie.id == i){
+                    if(id == i){
                         notReviewedBefore = false
                     }
                 }
@@ -107,7 +110,7 @@ class ReviewActivity : AppCompatActivity() {
             if(it.contains("ratedMovies")){
                 val ratedMovies = it.get("ratedMovies") as ArrayList<Int>
                 ratedMovies.forEach { i ->
-                    if(movie.id == i){
+                    if(id == i){
                         notRatedBefore = false
                     }
                 }
@@ -116,6 +119,7 @@ class ReviewActivity : AppCompatActivity() {
         }
     }
 
+    // handles review submission based on inputs and whether they have already reviewed
     private fun submitReview(notReviewedBefore : Boolean, notRatedBefore : Boolean){
         if(ratingForMovie == -1 && reviewInput.text.toString() == ""){
             Toast.makeText(this, "Nothing to submit, please rate or review the movie.", Toast.LENGTH_LONG).show()
@@ -150,14 +154,15 @@ class ReviewActivity : AppCompatActivity() {
         }
     }
 
+    // adds review to the database
     private fun addReview(withRating : Boolean){
-        db.collection("movies").document(movie.id.toString()).get().addOnSuccessListener {
+        db.collection("movies").document(id.toString()).get().addOnSuccessListener {
             //If our document exists
             if(it.exists()){
                 if(it.contains("reviews")){
                     val list = it.get("reviews") as ArrayList<String>
                     list.add(reviewInput.text.toString())
-                    db.collection("movies").document(movie.id.toString()).update("reviews", list)
+                    db.collection("movies").document(id.toString()).update("reviews", list)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                         }
@@ -166,7 +171,7 @@ class ReviewActivity : AppCompatActivity() {
                 else{
                     val list = ArrayList<String>()
                     list.add(reviewInput.text.toString())
-                    db.collection("movies").document(movie.id.toString()).update("reviews", list)
+                    db.collection("movies").document(id.toString()).update("reviews", list)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                         }
@@ -176,7 +181,7 @@ class ReviewActivity : AppCompatActivity() {
                 list.add(reviewInput.text.toString())
                 var map = HashMap<String, ArrayList<String>>()
                 map.put("reviews", list)
-                db.collection("movies").document(movie.id.toString()).set(map as Map<String, Any>).addOnSuccessListener {
+                db.collection("movies").document(id.toString()).set(map as Map<String, Any>).addOnSuccessListener {
                     Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -187,8 +192,9 @@ class ReviewActivity : AppCompatActivity() {
         }
     }
 
+    // adds rating to the database
     private fun addRating(){
-        db.collection("movies").document(movie.id.toString()).get().addOnSuccessListener {
+        db.collection("movies").document(id.toString()).get().addOnSuccessListener {
             //If our document exists
             if(it.exists()){
                 if(it.contains("ratingsSum") && it.contains("numOfRatings") && it.contains("ratingsAvg")){
@@ -197,17 +203,17 @@ class ReviewActivity : AppCompatActivity() {
                     numOfRatings++
                     sum += ratingForMovie
                     var avg = sum/numOfRatings
-                    db.collection("movies").document(movie.id.toString())
+                    db.collection("movies").document(id.toString())
                         .update("ratingsSum", sum)
                         .addOnSuccessListener {
                             //Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                         }
-                    db.collection("movies").document(movie.id.toString())
+                    db.collection("movies").document(id.toString())
                         .update("numOfRatings", numOfRatings)
                         .addOnSuccessListener {
                             //Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                         }
-                    db.collection("movies").document(movie.id.toString())
+                    db.collection("movies").document(id.toString())
                         .update("ratingsAvg", avg)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Rating added!", Toast.LENGTH_SHORT).show()
@@ -219,17 +225,17 @@ class ReviewActivity : AppCompatActivity() {
                     var sum = ratingForMovie
                     var numOfRatings = 1
                     var avg = ratingForMovie
-                    db.collection("movies").document(movie.id.toString())
+                    db.collection("movies").document(id.toString())
                         .update("ratingsSum", sum)
                         .addOnSuccessListener {
                             //Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                         }
-                    db.collection("movies").document(movie.id.toString())
+                    db.collection("movies").document(id.toString())
                         .update("numOfRatings", numOfRatings)
                         .addOnSuccessListener {
                             //Toast.makeText(this, "Review added!", Toast.LENGTH_SHORT).show()
                         }
-                    db.collection("movies").document(movie.id.toString())
+                    db.collection("movies").document(id.toString())
                         .update("ratingsAvg", avg)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Rating added!", Toast.LENGTH_SHORT).show()
@@ -244,9 +250,9 @@ class ReviewActivity : AppCompatActivity() {
                 map.put("ratingsSum", sum)
                 map.put("numOfRatings",numOfRatings)
                 map.put("ratingsAvg", avg)
-                map.put("id", movie.id)
+                map.put("id", id)
 
-                db.collection("movies").document(movie.id.toString()).set(map as Map<String, Any>).addOnSuccessListener {
+                db.collection("movies").document(id.toString()).set(map as Map<String, Any>).addOnSuccessListener {
                     Toast.makeText(this, "Rating added!", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -254,19 +260,20 @@ class ReviewActivity : AppCompatActivity() {
         }
     }
 
+    // updates the user to reflect having rated the movie
     private fun associateRatingToUser(){
         val uid = auth.currentUser!!.email!!
         db.collection("users").document(uid).get().addOnSuccessListener {
             if(it.contains("ratedMovies")){
                 val ratedMovies = it.get("ratedMovies") as ArrayList<Int>
-                ratedMovies.add(movie.id)
+                ratedMovies.add(id)
                 db.collection("users").document(uid).update("ratedMovies", ratedMovies)
                     .addOnSuccessListener {
                         println("Associated rating with user")
                     }
             } else{
                 val ratedMovie = ArrayList<Int>()
-                ratedMovie.add(movie.id)
+                ratedMovie.add(id)
                 db.collection("users").document(uid).update("ratedMovies", ratedMovie)
                     .addOnSuccessListener {
                         println("Successfully added to user")
@@ -275,19 +282,20 @@ class ReviewActivity : AppCompatActivity() {
         }
     }
 
+    // updates the user to reflect having reviewed the movie
     private fun associateReviewToUser(){
         val uid = auth.currentUser!!.email!!
         db.collection("users").document(uid).get().addOnSuccessListener {
             if(it.contains("reviewedMovies")){
-                val reviewedMovies = it.get("reviewedMovies") as ArrayList<Int>
-                reviewedMovies.add(movie.id)
+                val reviewedMovies = it.get("reviewedMovies") as ArrayList<Long>
+                reviewedMovies.add(id.toLong())
                 db.collection("users").document(uid).update("reviewedMovies", reviewedMovies)
                     .addOnSuccessListener {
                         println("Associated review with user")
                     }
             } else{
                 val reviewedMovie = ArrayList<Int>()
-                reviewedMovie.add(movie.id)
+                reviewedMovie.add(id)
                 db.collection("users").document(uid).update("reviewedMovies", reviewedMovie)
                     .addOnSuccessListener {
                         println("Successfully added to user")

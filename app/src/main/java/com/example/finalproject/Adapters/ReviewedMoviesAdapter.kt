@@ -12,6 +12,7 @@ import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
 import com.squareup.picasso.Picasso
 
+// adapter for movies that are viewed on the account settings page (image only, no title/date)
 class ReviewedMovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.reviewed_movie_item, parent, false)) {
     private val picture : ImageView
@@ -23,6 +24,7 @@ class ReviewedMovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         clickLayout = itemView.findViewById(R.id.layoutToClick)
     }
 
+    // otherwise, similar bind method to the movielistadapter, just with no title/date
     fun bind(movie: Movie, context: Context) {
 
         if (movie.poster_path != null && movie.poster_path.isNotEmpty()){

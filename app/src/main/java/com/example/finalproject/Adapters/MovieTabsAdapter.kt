@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.example.finalproject.Fragments.*
 
-
+// manages the fragments once user is signed in
 class MovieTabsAdapter(fm: FragmentManager): FragmentPagerAdapter(fm) {
 
     override fun getCount(): Int {

@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //set up tabView
+        //set up tabView for login/signup
         val fragAdapter =
             SigninTabsAdapter(supportFragmentManager)
         viewPager.adapter = fragAdapter

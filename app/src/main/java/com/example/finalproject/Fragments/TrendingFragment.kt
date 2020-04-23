@@ -15,6 +15,7 @@ import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
 import kotlinx.android.synthetic.main.fragment_trending.*
 
+// initial movie fragment, shows trending movies from the past day
 class TrendingFragment : Fragment() {
 
     lateinit var viewModel: APIViewModel
@@ -35,7 +36,7 @@ class TrendingFragment : Fragment() {
         // api viewmodel
         viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
 
-        // set up recycler view with grid layout adapter
+        // set up recycler view with vertical layout
         val recyclerView = trendingRecyclerView
         val movieAdapter = MovieListAdapter(movieList, this.context!!)
         recyclerView.adapter = movieAdapter

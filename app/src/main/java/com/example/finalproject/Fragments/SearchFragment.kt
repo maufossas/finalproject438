@@ -25,18 +25,12 @@ import kotlinx.android.synthetic.main.fragment_search.*
 class SearchFragment : Fragment() {
 
     lateinit var viewModel: APIViewModel
-    //This is going to be our movie list for filtering by country or year
+    //List for movie results
     var movieList: ArrayList<Movie> = ArrayList()
-    //This will be our movie list for filtering by title
-    //var movieListByTitle: ArrayList<Movie> = ArrayList()
-    //This will be the joint movie list, and the results that will be displayed:
-    //var finalMovieList: ArrayList<Movie> = ArrayList()
     private lateinit var db: FirebaseFirestore
-
 
     var year: String = ""
     var language: String = ""
-    var rating: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,7 +56,7 @@ class SearchFragment : Fragment() {
         // api viewmodel
         viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
 
-        // set up recycler view with grid layout adapter
+        // set up recycler view with vertical layout
         val recyclerView = searchRecyclerView
         val movieAdapter = MovieListAdapter(movieList, this.context!!)
         recyclerView.adapter = movieAdapter
@@ -136,15 +130,15 @@ class SearchFragment : Fragment() {
             ) {
                 //If they don't choose the "rating" option.
                 if (position != 0) {
-
+                    // load from our database of ratings
                     db.collection("movies").whereEqualTo("ratingsAvg", position)
                         .get().addOnSuccessListener {
-                            var tempList: ArrayList<Int> = ArrayList()
+                            val tempList: ArrayList<Int> = ArrayList()
 
                             for (movie in it) {
                                 if (movie.contains("id")) {
-                                    var id = movie.get("id") as Long
-                                    tempList.add(id.toInt())
+                                    val movieID = movie.get("id") as Long
+                                    tempList.add(movieID.toInt())
                                 }
                             }
 
@@ -204,7 +198,6 @@ class SearchFragment : Fragment() {
                     changeInFilter(movieAdapter)
                 } else {
                     viewModel.getByDiscover(language, year)
-                    //movieListByTitle.clear()
                     changeInFilter(movieAdapter)
                 }
             }
@@ -217,27 +210,7 @@ class SearchFragment : Fragment() {
             movieList.clear()
             movieList.addAll(it)
             movieAdpater.notifyDataSetChanged()
-            //combineLists(movieAdpater)
         })
     }
-
-    /*
-    private fun changeInTitle(movieAdpater : MovieListAdapter) {
-        viewModel.movieList.observe(viewLifecycleOwner, Observer {
-            movieListByTitle.clear()
-            movieListByTitle.addAll(it)
-            combineLists(movieAdpater)
-        })
-    }
-
-    private fun combineLists(movieAdapter : MovieListAdapter){
-        if(movieListByTitle.isEmpty()){
-            finalMovieList = movieList
-        } else{
-            finalMovieList = ArrayList(movieList.intersect(movieListByTitle).toTypedArray().asList())
-        }
-        movieAdapter.notifyDataSetChanged()
-    }
-     */
 
 }

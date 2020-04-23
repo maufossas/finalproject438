@@ -29,7 +29,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
     private var hasRated = false
     private var updating = false
 
-    private val result_finished = 123456
+    private val resultFinished = 123456
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,24 +53,29 @@ class SingleMovieActivity() :  AppCompatActivity() {
 
         apiViewModel.getByID(id)
 
+        // load in movie from the API
         apiViewModel.movie.observe(this, Observer {
             movie = it
             loadInMovie()
             val uid = auth.currentUser!!.email!!
+            // load in user information to set watchlist and favorites buttons
             db.collection("users").document(uid).get().addOnSuccessListener {
                 if (it.exists()) {
+                    // if movie is in the watchlist, change to "remove from watchlist"
                     if (it.contains("watchlist")) {
                         watchlist = it.get("watchlist") as ArrayList<Long>
                         if (watchlist.contains(movie.id.toLong())){
                             addToWatchlistButton.text = "Remove from watchlist"
                         }
                     }
+                    // if movie is in the favorites, change to "remove from favorites"
                     if (it.contains("favorites")){
                         favorites = it.get("favorites") as ArrayList<Long>
                         if (favorites.contains(movie.id.toLong())){
                             addToFavoritesButton.text = "Remove from favorites"
                         }
                     }
+                    // don't allow review page access if it has been reviewed and rated
                     if (it.contains("reviewedMovies")){
                         if ((it.get("reviewedMovies") as ArrayList<Int>).contains(movie.id)){
                             hasReviewed = true
@@ -81,6 +86,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
                             hasRated = true
                         }
                     }
+                    // update their recent movies to reflect this new movie page being visited
                     if (it.contains("recentMovies")){
                         val recents = it.get("recentMovies") as ArrayList<Long>
                         recents.remove(movie.id.toLong())
@@ -104,6 +110,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     updateWatchlist()
                 }
 
+                // if they haven't already reviewed + rated, allows access to review + rating page
                 writeReviewButton.setOnClickListener {
                     if (hasReviewed && hasRated){
                         val toast = Toast.makeText(
@@ -115,11 +122,13 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     }else{
                         val intent = Intent(this, ReviewActivity::class.java)
                         intent.putExtra("id", movie.id)
+                        intent.putExtra("title", movie.title)
                         startActivity(intent)
                     }
                 }
             }
 
+            // option to see reviews for the movie (doesn't require user info loaded)
             seeReviewsButton.setOnClickListener {
                 val intent = Intent(this, ListOfReviewsActivity::class.java)
                 intent.putExtra("id", movie.id)
@@ -129,8 +138,8 @@ class SingleMovieActivity() :  AppCompatActivity() {
 
         })
 
+        // if this is for the favorites list, change the button layout
         val doFavorites = intent.getIntExtra("favorites", -1)
-        //Then we sent a request to update our favorite list
         if(doFavorites != -1){
             singleMovieCancelButton.text = "Cancel"
             seeReviewsButton.visibility = View.GONE
@@ -152,6 +161,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
 
     }
 
+    // fills page with movie info
     private fun loadInMovie(){
         if (movie.poster_path != null && movie.poster_path.isNotEmpty()){
             // if the picture link exists, load it in
@@ -164,10 +174,12 @@ class SingleMovieActivity() :  AppCompatActivity() {
         singleMovieSummary.text = movie.overview
     }
 
+    // if they hit add/remove from favorites, updates and lets the LookForFavoritesActivity know that it has been chosen
     private fun updateFavorites(){
         val uid = auth.currentUser!!.email!!
-        if (!updating){
+        if (!updating){ // disallow simultaneous presses (not a perfect lock, but is better than nothing)
             updating = true
+            // if we remove it, update database then return
             if(favorites.remove(movie.id.toLong())){
                 db.collection("users").document(uid).update("favorites", favorites).addOnSuccessListener {
                     val toast = Toast.makeText(
@@ -177,10 +189,11 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     )
                     toast.show()
                     updating = false
-                    setResult(result_finished, intent)
+                    setResult(resultFinished, intent)
                     finish()
                 }
             }else{
+                // if it wasn't removed, then we must be adding it, so update and return
                 favorites.add(movie.id.toLong())
                 db.collection("users").document(uid).update("favorites", favorites).addOnSuccessListener {
                     val toast = Toast.makeText(
@@ -190,15 +203,16 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     )
                     toast.show()
                     updating = false
-                    setResult(result_finished, intent)
+                    setResult(resultFinished, intent)
                     finish()
                 }
             }
         }
     }
 
+    // similar to the favorites, just add or remove the current movie from the watchlist (no return)
     private fun updateWatchlist(){
-        if (!updating){
+        if (!updating){ // disallow simultaneous presses (not a perfect lock, but is better than nothing)
             val uid = auth.currentUser!!.email!!
             updating = true
             if(watchlist.remove(movie.id.toLong())){

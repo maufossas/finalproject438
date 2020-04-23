@@ -12,6 +12,7 @@ import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
 import com.squareup.picasso.Picasso
 
+// viewholder for the add to favorites list (custom search, and calls the corresponding method in the activity)
 class AddToFavoritesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.movie_item, parent, false)) {
     private val picture : ImageView
@@ -27,6 +28,7 @@ class AddToFavoritesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         clickLayout = itemView.findViewById(R.id.layoutToClick)
     }
 
+    // add image, title, and release date, and launch SingleMovieActivity from LookForFavoritesActivity
     fun bind(movie: Movie, context: Context) {
         title.text = movie.title
         releaseDate.text = movie.release_date

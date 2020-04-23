@@ -12,7 +12,7 @@ class MoviesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
 
-        //set up tabView
+        //set up tabView for trending/search/watchlist/settings
         val fragAdapter =
             MovieTabsAdapter(supportFragmentManager)
         viewPager.adapter = fragAdapter

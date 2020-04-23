@@ -15,6 +15,7 @@ import com.example.finalproject.Fragments.WatchlistFragment
 import com.example.finalproject.R
 import com.squareup.picasso.Picasso
 
+// adapter for movies on the watchlist (difference from movieListAdapter is that it now features a remove button)
 class WatchlistViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.watchlist_movie_item, parent, false)) {
     private val picture : ImageView

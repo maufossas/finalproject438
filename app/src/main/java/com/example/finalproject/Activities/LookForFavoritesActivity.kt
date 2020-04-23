@@ -23,19 +23,21 @@ class LookForFavoritesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_look_for_favorites)
 
-        // api viewmodel
+        // api access
         viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
 
+        // quit without adding a new favorite
         cancelFavoriteSearch.setOnClickListener {
             finish()
         }
 
-        // set up recycler view with grid layout adapter
+        // set up recycler view with single column
         val recyclerView = searchForFavoriteRecyclerView
         val movieAdapter = AddToFavoritesAdapter(movieList, this)
         recyclerView.adapter = movieAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // add listener for searching movies
         searchForFavorite.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 //DO NOTHING
@@ -44,6 +46,7 @@ class LookForFavoritesActivity : AppCompatActivity() {
                 //DO NOTHING
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                // update search as input is typed
                 if(searchForFavorite.text.isNotEmpty()){
                     viewModel.getBySearch(searchForFavorite.text.toString())
                     changeInFilter(movieAdapter)
@@ -52,6 +55,7 @@ class LookForFavoritesActivity : AppCompatActivity() {
         })
     }
 
+    // update list
     private fun changeInFilter(movieAdpater : AddToFavoritesAdapter) {
         viewModel.movieList.observe(this, Observer {
             movieList.clear()
@@ -60,6 +64,7 @@ class LookForFavoritesActivity : AppCompatActivity() {
         })
     }
 
+    // launch single movie activity when list item is clicked
     fun openMovie(id : Int){
         val intent = Intent(this, SingleMovieActivity::class.java)
         intent.putExtra("id", id)
@@ -67,6 +72,7 @@ class LookForFavoritesActivity : AppCompatActivity() {
         startActivityForResult(intent, 12345)
     }
 
+    // if movie was added to favorites, go back to account screen (otherwise, stay in search)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == 123456){

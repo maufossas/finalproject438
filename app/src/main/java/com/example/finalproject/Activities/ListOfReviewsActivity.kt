@@ -30,12 +30,14 @@ class ListOfReviewsActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        // get info from intent
         val movieId = intent.getIntExtra("id", -1)
         val movieTitle = intent.getStringExtra("title")
         movieReviewsTitle.text = movieTitle
 
         val recyclerView = findViewById<RecyclerView>(R.id.reviewsRecyclerView)
 
+        // load in reviews from firebase
         db.collection("movies").document(movieId.toString()).get().addOnSuccessListener {
             //If our document exists
             if(it.exists()){
@@ -67,6 +69,7 @@ class ListOfReviewsActivity : AppCompatActivity() {
             }
         }
 
+        // return when cancelled
         returnToMovie.setOnClickListener {
             finish()
          }

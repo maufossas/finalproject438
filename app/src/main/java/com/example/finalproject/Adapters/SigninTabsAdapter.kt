@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.example.finalproject.Fragments.LoginFragment
 import com.example.finalproject.Fragments.SignupFragment
 
-
+// adapter for the log in / sign up fragments
 class SigninTabsAdapter(fm: FragmentManager): FragmentPagerAdapter(fm) {
 
     override fun getCount(): Int {

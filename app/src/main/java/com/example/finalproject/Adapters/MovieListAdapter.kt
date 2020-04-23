@@ -13,6 +13,7 @@ import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
 import com.squareup.picasso.Picasso
 
+// generic movie list adapter used in trending and search
 class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.movie_item, parent, false)) {
     private val picture : ImageView
@@ -28,6 +29,7 @@ class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         clickLayout = itemView.findViewById(R.id.layoutToClick)
     }
 
+    // make a display with the movie poster, title, and release date
     fun bind(movie: Movie, context: Context) {
         title.text = movie.title
         releaseDate.text = movie.release_date
@@ -37,6 +39,7 @@ class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         }else{
             picture.setImageResource(R.drawable.no_poster_2)
         }
+        // launch single movie activity when clicked
         clickLayout.setOnClickListener{
             // launch the movie activity to view more details
             val intent = Intent(context, SingleMovieActivity::class.java)

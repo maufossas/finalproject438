@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.fragment_signup.*
 import java.util.HashMap
 
+// fragment for account creation
 class SignupFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
@@ -51,15 +52,17 @@ class SignupFragment : Fragment() {
 
 
     private fun signUp() {
+        // cancel if input is invalid
         if (!validateForm()) {
             return
         }
-        var name = fieldName.text.toString()
-        var email = fieldEmail.text.toString()
-        var password = fieldPassword.text.toString()
+        val name = fieldName.text.toString()
+        val email = fieldEmail.text.toString()
+        val password = fieldPassword.text.toString()
 
 
         // [START create_user_with_email]
+        // creates user, then they can login through the login tab
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener() { task ->
                 if (task.isSuccessful) {
@@ -69,6 +72,7 @@ class SignupFragment : Fragment() {
                         Toast.LENGTH_SHORT).show()
                     fieldEmail.text.clear()
                     fieldPassword.text.clear()
+                    fieldPasswordConfirm.text.clear()
                     fieldName.text.clear()
 
                     val userMap: MutableMap<String, Any> = HashMap()
@@ -93,6 +97,7 @@ class SignupFragment : Fragment() {
             }
     }
 
+    // ensure all inputs are valid, and password matched confirm password
     private fun validateForm(): Boolean {
         var valid = true
 

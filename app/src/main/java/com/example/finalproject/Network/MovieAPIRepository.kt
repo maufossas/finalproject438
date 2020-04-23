@@ -10,6 +10,7 @@ import retrofit2.HttpException
 
 class MovieAPIRepository {
     val service = ApiClient.makeRetrofitService()
+    // our moviedb api key
     val API_KEY = "39e54ff6a343fcda519d85f9e57d967b"
 
     // all methods use coroutines to avoid making api requests on the main thread
@@ -29,6 +30,7 @@ class MovieAPIRepository {
         }
     }
 
+    // get a list of movies by search terms
     fun getBySearch(resBody: MutableLiveData<List<Movie>>, title : String) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = service.getBySearch(API_KEY, title)
@@ -45,6 +47,7 @@ class MovieAPIRepository {
         }
     }
 
+    // get a single movie by id
     fun getByID(resBody: MutableLiveData<Movie>, id : Int) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = service.getByID(id.toString(), API_KEY)
@@ -61,6 +64,7 @@ class MovieAPIRepository {
         }
     }
 
+    // get a list of movies by their ids
     fun getByIDList(resBody: MutableLiveData<List<Movie>>, ids: ArrayList<Int>){
         CoroutineScope(Dispatchers.IO).launch {
             val list = ArrayList<Movie>()
@@ -82,6 +86,7 @@ class MovieAPIRepository {
         }
     }
 
+    // get by discovery terms
     fun getByDiscover(resBody: MutableLiveData<List<Movie>>, lang : String, year : String) {
         CoroutineScope(Dispatchers.IO).launch {
             var map = HashMap<String, String>()

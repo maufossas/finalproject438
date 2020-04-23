@@ -15,7 +15,7 @@ import com.example.finalproject.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_login.*
 
-
+// handles logins for created accounts
 class LoginFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
@@ -36,15 +36,11 @@ class LoginFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-    }
-
     override fun onStart() {
         super.onStart()
 
         val currentUser = auth.currentUser
+        // load app if they're already signed in
         if(currentUser != null){
             val intent = Intent(this.context, MoviesActivity::class.java)
             startActivity(intent)
@@ -54,36 +50,39 @@ class LoginFragment : Fragment() {
     }
 
     private fun signIn() {
-        var email = fieldEmail.text.toString()
-        var password = fieldPassword.text.toString()
+        val email = fieldEmail.text.toString()
+        val password = fieldPassword.text.toString()
 
         Log.d(TAG, "signIn:$email")
-        if (!validateForm()) {
-            return
+
+        // ensure input is valid
+        if (validateForm()) {
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener() { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithEmail:success")
+                        // clear out sign in info
+                        fieldEmail.text.clear()
+                        fieldPassword.text.clear()
+                        val user = auth.currentUser
+                        Toast.makeText(this.context, "Authentication success.",
+                            Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this.context, MoviesActivity::class.java)
+                        // launch movie app
+                        startActivity(intent)
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithEmail:failure", task.exception)
+                        Toast.makeText(this.context, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
 
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener() { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithEmail:success")
-                    fieldEmail.text.clear()
-                    fieldPassword.text.clear()
-                    val user = auth.currentUser
-                    Toast.makeText(this.context, "Authentication success.",
-                        Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this.context, MoviesActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-                    Toast.makeText(this.context, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show()
-                }
-            }
     }
 
-
+    // make sure input is valid (email, password)
     private fun validateForm(): Boolean {
         var valid = true
 
