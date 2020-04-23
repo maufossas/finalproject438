@@ -143,12 +143,12 @@ class SearchFragment : Fragment() {
 
                     db.collection("movies").whereEqualTo("ratingsAvg", position)
                         .get().addOnSuccessListener {
-                            var tempList: ArrayList<String> = ArrayList()
+                            var tempList: ArrayList<Int> = ArrayList()
 
                             for (movie in it) {
                                 if (movie.contains("id")) {
-                                    var id = movie.get("id") as Long
-                                    tempList.add(id.toString())
+                                    var id = movie.get("id") as Int
+                                    tempList.add(id)
                                 }
                             }
 

@@ -64,6 +64,13 @@ class ListOfReviewsActivity : AppCompatActivity() {
                     rating = it.get("ratingsAvg") as Long
                     averageRating.text = "Average rating: " + rating.toString() + " Stars"
                 }
+            }else{
+                reviewList.add("This movie does not yet have any reviews.")
+                val reviewAdapter = ReviewListAdapter(reviewList)
+                recyclerView.adapter = reviewAdapter
+                recyclerView.layoutManager = LinearLayoutManager(this)
+                reviewAdapter.notifyDataSetChanged()
+                averageRating.text = "This movie has not been rated yet."
             }
         }
 

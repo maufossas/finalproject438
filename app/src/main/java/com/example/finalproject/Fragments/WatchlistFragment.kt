@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_watchlist.*
 class WatchlistFragment : Fragment() {
 
     private var movieList = ArrayList<Movie>()
-    private var movieIDs = ArrayList<String>()
+    private var movieIDs = ArrayList<Int>()
     lateinit var viewModel : APIViewModel
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
@@ -59,7 +59,7 @@ class WatchlistFragment : Fragment() {
 
         db.collection("users").document(uid).get().addOnSuccessListener {
             if (it.contains("watchlist")){
-                val ids = it.get("watchlist") as ArrayList<String>
+                val ids = it.get("watchlist") as ArrayList<Int>
                 if (ids.size > 0){
                     movieIDs.clear()
                     movieIDs.addAll(ids)
@@ -78,7 +78,7 @@ class WatchlistFragment : Fragment() {
         // only do 1 call if removed (should prevent spamming the button)
         if(movieList.remove(movie)){
             val uid = auth.currentUser!!.email!!
-            movieIDs.remove(movie.id.toString())
+            movieIDs.remove(movie.id)
             db.collection("users").document(uid).update("watchlist", movieIDs)
             adapter.notifyDataSetChanged()
         }

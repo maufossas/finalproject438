@@ -32,7 +32,7 @@ class AccountInfoFragment : Fragment() {
     private var numReviews = 0
     private var numRatings = 0
     private var name = ""
-    private var favorites = ArrayList<String>()
+    private var favorites = ArrayList<Int>()
     private var posters = ArrayList<String>()
 
     override fun onCreateView(
@@ -86,9 +86,8 @@ class AccountInfoFragment : Fragment() {
                 val person = it.get("Name") as String
                 name = person
             }
-            if(it.contains("Favorites")){
-                val favoriteMovies = it.get("Favorites") as ArrayList<String>
-                favorites = favoriteMovies
+            if(it.contains("favorites")){
+                favorites = it.get("favorites") as ArrayList<Int>
                 if(favorites.size == 3){
                     addMoviesMessage.text = " Your favorite movies: "
                 }

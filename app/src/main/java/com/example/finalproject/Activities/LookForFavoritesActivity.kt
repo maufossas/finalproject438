@@ -50,7 +50,7 @@ class LookForFavoritesActivity : AppCompatActivity() {
                 //DO NOTHING
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if(searchForFavorite.text.toString().length != 0){
+                if(searchForFavorite.text.isNotEmpty()){
                     viewModel.getBySearch(searchForFavorite.text.toString())
                     changeInFilter(movieAdapter)
                 }

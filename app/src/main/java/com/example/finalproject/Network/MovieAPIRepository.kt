@@ -45,9 +45,9 @@ class MovieAPIRepository {
         }
     }
 
-    fun getByID(resBody: MutableLiveData<Movie>, id : String) {
+    fun getByID(resBody: MutableLiveData<Movie>, id : Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = service.getByID(id, API_KEY)
+            val response = service.getByID(id.toString(), API_KEY)
 
             withContext(Dispatchers.Main) {
                 try{
@@ -61,11 +61,11 @@ class MovieAPIRepository {
         }
     }
 
-    fun getByIDList(resBody: MutableLiveData<List<Movie>>, ids: ArrayList<String>){
+    fun getByIDList(resBody: MutableLiveData<List<Movie>>, ids: ArrayList<Int>){
         CoroutineScope(Dispatchers.IO).launch {
             val list = ArrayList<Movie>()
             for (id in ids){
-                val response = service.getByID(id, API_KEY)
+                val response = service.getByID(id.toString(), API_KEY)
                 if (response.isSuccessful){
                     list.add(response.body()!!)
                 }

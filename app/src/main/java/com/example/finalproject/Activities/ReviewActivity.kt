@@ -62,7 +62,7 @@ class ReviewActivity : AppCompatActivity() {
 
         val id = intent.getIntExtra("id", -1)
 
-        apiViewModel.getByID(id.toString())
+        apiViewModel.getByID(id)
 
         apiViewModel.movie.observe(this, Observer {
             movie = it

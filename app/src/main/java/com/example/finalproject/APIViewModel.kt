@@ -25,11 +25,11 @@ class APIViewModel(application: Application): AndroidViewModel(application) {
         movieAPIRepository.getBySearch(movieList, search)
     }
 
-    fun getByID(id: String){
+    fun getByID(id: Int){
         movieAPIRepository.getByID(movie, id)
     }
 
-    fun getByIDList(ids : ArrayList<String>){
+    fun getByIDList(ids : ArrayList<Int>){
         movieAPIRepository.getByIDList(movieList, ids)
     }
 

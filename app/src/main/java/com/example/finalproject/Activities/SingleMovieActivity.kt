@@ -23,8 +23,8 @@ class SingleMovieActivity() :  AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
-    private var watchlist = ArrayList<String>()
-    private var favorites = ArrayList<String>()
+    private var watchlist = ArrayList<Int>()
+    private var favorites = ArrayList<Int>()
     private var hasReviewed = false
     private var hasRated = false
     private var updating = false
@@ -52,7 +52,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
 
         val id = intent.getIntExtra("id", -1)
 
-        apiViewModel.getByID(id.toString())
+        apiViewModel.getByID(id)
 
         apiViewModel.movie.observe(this, Observer {
             movie = it
@@ -61,14 +61,14 @@ class SingleMovieActivity() :  AppCompatActivity() {
             db.collection("users").document(uid).get().addOnSuccessListener {
                 if (it.exists()) {
                     if (it.contains("watchlist")) {
-                        watchlist = it.get("watchlist") as ArrayList<String>
-                        if (watchlist.contains(movie.id.toString())){
+                        watchlist = it.get("watchlist") as ArrayList<Int>
+                        if (watchlist.contains(movie.id)){
                             addToWatchlistButton.text = "Remove from watchlist"
                         }
                     }
-                    if (it.contains("Favorites")){
-                        favorites = it.get("Favorites") as ArrayList<String>
-                        if (favorites.contains(movie.id.toString())){
+                    if (it.contains("favorites")){
+                        favorites = it.get("favorites") as ArrayList<Int>
+                        if (favorites.contains(movie.id)){
                             addToFavoritesButton.text = "Remove from favorites"
                         }
                     }
@@ -156,8 +156,8 @@ class SingleMovieActivity() :  AppCompatActivity() {
         val uid = auth.currentUser!!.email!!
         if (!updating){
             updating = true
-            if(favorites.remove(movie.id.toString())){
-                db.collection("users").document(uid).update("Favorites", favorites).addOnSuccessListener {
+            if(favorites.remove(movie.id)){
+                db.collection("users").document(uid).update("favorites", favorites).addOnSuccessListener {
                     val toast = Toast.makeText(
                         this,
                         "Removed from favorites",
@@ -168,8 +168,8 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     finish()
                 }
             }else{
-                favorites.add(movie.id.toString())
-                db.collection("users").document(uid).update("Favorites", favorites).addOnSuccessListener {
+                favorites.add(movie.id)
+                db.collection("users").document(uid).update("favorites", favorites).addOnSuccessListener {
                     val toast = Toast.makeText(
                         this,
                         "Added to favorites",
@@ -187,7 +187,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
         if (!updating){
             val uid = auth.currentUser!!.email!!
             updating = true
-            if(watchlist.remove(movie.id.toString())){
+            if(watchlist.remove(movie.id)){
                 db.collection("users").document(uid).update("watchlist", watchlist).addOnSuccessListener {
                     val toast = Toast.makeText(
                         this,
@@ -199,7 +199,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     updating = false
                 }
             }else{
-                watchlist.add(movie.id.toString())
+                watchlist.add(movie.id)
                 db.collection("users").document(uid).update("watchlist", watchlist).addOnSuccessListener {
                     val toast = Toast.makeText(
                         this,
