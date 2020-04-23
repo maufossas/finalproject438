@@ -23,6 +23,12 @@ class SingleMovieActivity() :  AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
+    private var watchlist = ArrayList<String>()
+    private var favorites = ArrayList<String>()
+    private var hasReviewed = false
+    private var hasRated = false
+    private var updating = false
+
     //For adding favorite movies:
     var posterToUpdate = -1
 
@@ -49,9 +55,66 @@ class SingleMovieActivity() :  AppCompatActivity() {
         apiViewModel.getByID(id.toString())
 
         apiViewModel.movie.observe(this, Observer {
-
             movie = it
             loadInMovie()
+            val uid = auth.currentUser!!.email!!
+            db.collection("users").document(uid).get().addOnSuccessListener {
+                if (it.exists()) {
+                    if (it.contains("watchlist")) {
+                        watchlist = it.get("watchlist") as ArrayList<String>
+                        if (watchlist.contains(movie.id.toString())){
+                            addToWatchlistButton.text = "Remove from watchlist"
+                        }
+                    }
+                    if (it.contains("Favorites")){
+                        favorites = it.get("Favorites") as ArrayList<String>
+                        if (favorites.contains(movie.id.toString())){
+                            addToFavoritesButton.text = "Remove from favorites"
+                        }
+                    }
+                    if (it.contains("reviewedMovies")){
+                        if ((it.get("reviewedMovies") as ArrayList<Int>).contains(movie.id)){
+                            hasReviewed = true
+                        }
+                    }
+                    if (it.contains("ratedMovies")){
+                        if ((it.get("ratedMovies") as ArrayList<Int>).contains(movie.id)){
+                            hasRated = true
+                        }
+                    }
+                }
+                // only allow database-related calls once database has been accessed
+                addToFavoritesButton.setOnClickListener {
+                    updateFavorites()
+                }
+
+                addToWatchlistButton.setOnClickListener {
+                    updateWatchlist()
+                }
+
+                writeReviewButton.setOnClickListener {
+                    if (hasReviewed && hasRated){
+                        val toast = Toast.makeText(
+                            this,
+                            "You have already reviewed this movie",
+                            Toast.LENGTH_SHORT
+                        )
+                        toast.show()
+                    }else{
+                        val intent = Intent(this, ReviewActivity::class.java)
+                        intent.putExtra("id", movie.id)
+                        startActivity(intent)
+                    }
+                }
+            }
+
+            seeReviewsButton.setOnClickListener {
+                val intent = Intent(this, ListOfReviewsActivity::class.java)
+                intent.putExtra("id", movie.id)
+                intent.putExtra("title", movie.title)
+                startActivity(intent)
+            }
+
         })
 
         posterToUpdate = intent.getIntExtra("posterToUpdate", -1)
@@ -70,30 +133,11 @@ class SingleMovieActivity() :  AppCompatActivity() {
             addToFavoritesButton.visibility = View.GONE
         }
 
-        addToFavoritesButton.setOnClickListener {
-            addOrUpdateFavorites()
-        }
-
-        addToWatchlistButton.setOnClickListener {
-            addToWatchlist()
-        }
         // if they cancel, stop the activity
         singleMovieCancelButton.setOnClickListener {
             finish()
         }
 
-        seeReviewsButton.setOnClickListener {
-            val intent = Intent(this, ListOfReviewsActivity::class.java)
-            intent.putExtra("id", movie.id)
-            intent.putExtra("title", movie.title)
-            startActivity(intent)
-        }
-
-        writeReviewButton.setOnClickListener {
-            val intent = Intent(this, ReviewActivity::class.java)
-            intent.putExtra("id", movie.id)
-            startActivity(intent)
-        }
     }
 
     private fun loadInMovie(){
@@ -101,104 +145,70 @@ class SingleMovieActivity() :  AppCompatActivity() {
             // if the picture link exists, load it in
             Picasso.get().load(moviePath + movie.poster_path).into(singleMoviePoster)
         }else{
-            singleMoviePoster.setImageResource(R.drawable.no_poster)
+            singleMoviePoster.setImageResource(R.drawable.no_poster_2)
         }
         singleMovieTitle.text = movie.title
         singleMovieDate.text = movie.release_date
         singleMovieSummary.text = movie.overview
     }
 
-    private fun addOrUpdateFavorites(){
+    private fun updateFavorites(){
         val uid = auth.currentUser!!.email!!
-        db.collection("users").document(uid).get().addOnSuccessListener {
-            if (it.exists()) {
-                if (it.contains("Favorites")) {
-                    val list = it.get("Favorites") as ArrayList<String>
-                    //They are expanding the size of their favorites.
-                    if(list.size - 1 < posterToUpdate) {
-                        list.add(movie.poster_path)
-                    } else{
-                        list[posterToUpdate] = movie.poster_path
-                    }
-                    db.collection("users").document(uid).update("Favorites", list)
-                        .addOnSuccessListener {
-                            val toast = Toast.makeText(
-                                this,
-                                "Favorites updated!",
-                                Toast.LENGTH_SHORT
-                            )
-                            toast.show()
-                        }
-                } else {
-                    val list = ArrayList<String>()
-                    list.add(movie.poster_path)
-                    db.collection("users").document(uid).update("Favorites", list)
-                        .addOnSuccessListener {
-                            val toast =
-                                Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT)
-                            toast.show()
-                        }
+        if (!updating){
+            updating = true
+            if(favorites.remove(movie.id.toString())){
+                db.collection("users").document(uid).update("Favorites", favorites).addOnSuccessListener {
+                    val toast = Toast.makeText(
+                        this,
+                        "Removed from favorites",
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
+                    updating = false
+                    finish()
                 }
             }else{
-                val list = ArrayList<String>()
-                list.add(movie.poster_path)
-                var map = HashMap<String, ArrayList<String>>()
-                map.put("Favorites", list)
-                db.collection("users").document(uid).set(map as Map<String, Any>).addOnSuccessListener {
-                    val toast =
-                        Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT)
+                favorites.add(movie.id.toString())
+                db.collection("users").document(uid).update("Favorites", favorites).addOnSuccessListener {
+                    val toast = Toast.makeText(
+                        this,
+                        "Added to favorites",
+                        Toast.LENGTH_SHORT
+                    )
                     toast.show()
+                    updating = false
+                    finish()
                 }
             }
-            var intent = Intent(this, MoviesActivity::class.java)
-            startActivity(intent)
         }
     }
 
-    private fun addToWatchlist(){
-        val uid = auth.currentUser!!.email!!
-        db.collection("users").document(uid).get().addOnSuccessListener {
-            if (it.exists()) {
-                if (it.contains("watchlist")) {
-                    val list = it.get("watchlist") as ArrayList<String>
-                    if (list.contains(movie.id.toString())) {
-                        val toast = Toast.makeText(
-                            this,
-                            "Movie is already in watchlist",
-                            Toast.LENGTH_SHORT
-                        )
-                        toast.show()
-                    } else {
-                        list.add(movie.id.toString())
-                        db.collection("users").document(uid).update("watchlist", list)
-                            .addOnSuccessListener {
-                                val toast = Toast.makeText(
-                                    this,
-                                    "Added to watchlist",
-                                    Toast.LENGTH_SHORT
-                                )
-                                toast.show()
-                            }
-                    }
-                } else {
-                    val list = ArrayList<String>()
-                    list.add(movie.id.toString())
-                    db.collection("users").document(uid).update("watchlist", list)
-                        .addOnSuccessListener {
-                            val toast =
-                                Toast.makeText(this, "Added to watchlist", Toast.LENGTH_SHORT)
-                            toast.show()
-                        }
+    private fun updateWatchlist(){
+        if (!updating){
+            val uid = auth.currentUser!!.email!!
+            updating = true
+            if(watchlist.remove(movie.id.toString())){
+                db.collection("users").document(uid).update("watchlist", watchlist).addOnSuccessListener {
+                    val toast = Toast.makeText(
+                        this,
+                        "Removed from watchlist",
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
+                    addToWatchlistButton.text = "Add to watchlist"
+                    updating = false
                 }
             }else{
-                val list = ArrayList<String>()
-                list.add(movie.id.toString())
-                var map = HashMap<String, ArrayList<String>>()
-                map.put("watchlist", list)
-                db.collection("users").document(uid).set(map as Map<String, Any>).addOnSuccessListener {
-                    val toast =
-                        Toast.makeText(this, "Added to watchlist", Toast.LENGTH_SHORT)
+                watchlist.add(movie.id.toString())
+                db.collection("users").document(uid).update("watchlist", watchlist).addOnSuccessListener {
+                    val toast = Toast.makeText(
+                        this,
+                        "Added to watchlist",
+                        Toast.LENGTH_SHORT
+                    )
                     toast.show()
+                    addToWatchlistButton.text = "Remove from watchlist"
+                    updating = false
                 }
             }
         }
