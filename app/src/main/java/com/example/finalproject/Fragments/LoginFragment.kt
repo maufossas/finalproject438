@@ -69,6 +69,8 @@ class LoginFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
+                    fieldEmail.text.clear()
+                    fieldPassword.text.clear()
                     val user = auth.currentUser
                     Toast.makeText(this.context, "Authentication success.",
                         Toast.LENGTH_SHORT).show()
