@@ -81,6 +81,19 @@ class SingleMovieActivity() :  AppCompatActivity() {
                             hasRated = true
                         }
                     }
+                    if (it.contains("recentMovies")){
+                        val recents = it.get("recentMovies") as ArrayList<Long>
+                        recents.remove(movie.id.toLong())
+                        recents.add(0, movie.id.toLong())
+                        while(recents.size > 10){
+                            recents.removeAt(10)
+                        }
+                        db.collection("users").document(uid).update("recentMovies", recents)
+                    }else{
+                        val recents = ArrayList<Int>()
+                        recents.add(movie.id)
+                        db.collection("users").document(uid).update("recentMovies", recents)
+                    }
                 }
                 // only allow database-related calls once database has been accessed
                 addToFavoritesButton.setOnClickListener {

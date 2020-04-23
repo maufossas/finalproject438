@@ -35,7 +35,9 @@ class AccountInfoFragment : Fragment() {
     private var favorites = ArrayList<Int>()
     private var posters = ArrayList<String>()
     private var reviewed = ArrayList<Movie>()
-    private lateinit var adapter : ReviewedMovieAdapter
+    private var recent = ArrayList<Movie>()
+    private lateinit var reviewedAdapter : ReviewedMovieAdapter
+    private lateinit var recentAdapter : ReviewedMovieAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,10 +60,14 @@ class AccountInfoFragment : Fragment() {
 
         loadData()
 
-        adapter = ReviewedMovieAdapter(reviewed, this.context!!)
+        reviewedAdapter = ReviewedMovieAdapter(reviewed, this.context!!)
+        recentAdapter = ReviewedMovieAdapter(recent, this.context!!)
 
-        reviewedRecyclerView.adapter = adapter
+        reviewedRecyclerView.adapter = reviewedAdapter
         reviewedRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+
+        recentRecyclerView.adapter = recentAdapter
+        recentRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
 
         firstFavorite.setOnClickListener {
             updateFavorite(0)
@@ -92,9 +98,19 @@ class AccountInfoFragment : Fragment() {
                 viewModel.movieList.observe(this, Observer {
                     reviewed.clear()
                     reviewed.addAll(it)
-                    adapter.notifyDataSetChanged()
+                    reviewedAdapter.notifyDataSetChanged()
                 })
                 numReviews = reviews.size
+            }
+            if(it.contains("recentMovies")){
+                val recents = it.get("recentMovies") as ArrayList<Int>
+                val viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
+                viewModel.getSecondIDList(recents)
+                viewModel.secondMovieList.observe(this, Observer {
+                    recent.clear()
+                    recent.addAll(it)
+                    recentAdapter.notifyDataSetChanged()
+                })
             }
             if(it.contains("Name")){
                 val person = it.get("Name") as String

@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.AccountInfoFragment">
 
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
     <TextView
         android:id="@+id/accountName"
         android:layout_width="match_parent"
@@ -17,7 +26,6 @@
         android:id="@+id/reviewedMovies"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_marginTop="50dp"
         android:gravity="center_horizontal"
         android:textSize="15dp">
     </TextView>
@@ -26,7 +34,6 @@
         android:id="@+id/ratedMovies"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_marginTop="75dp"
         android:gravity="center_horizontal"
         android:textSize="15dp">
     </TextView>
@@ -35,13 +42,11 @@
         android:id="@+id/addMoviesMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="110dp"
         android:textSize="17dp"
         android:text=" Click to add your favorite movies:"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="120dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginLeft="15px"
@@ -77,15 +82,30 @@
         android:id="@+id/reviewedMoviesMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="360dp"
         android:text="Your reviewed movies:"
         android:textSize="17dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reviewedRecyclerView"
-        android:layout_marginTop="380dp"
         android:layout_width="match_parent"
-        android:layout_height="250dp" />
+        android:layout_height="180dp" />
+
+        <TextView
+            android:id="@+id/recentMoviesMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recent Activity:"
+            android:textSize="17dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recentRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="180dp" />
+
+
+    </LinearLayout>
+
+    </ScrollView>
 
     <Button
         android:id="@+id/LogoutButton"
