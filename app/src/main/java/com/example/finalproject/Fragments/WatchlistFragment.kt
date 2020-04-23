@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalproject.APIViewModel
-import com.example.finalproject.Adapters.MovieListAdapter
 import com.example.finalproject.Adapters.WatchlistAdapter
 import com.example.finalproject.Data.Movie
 import com.example.finalproject.R

@@ -2,7 +2,6 @@ package com.example.finalproject.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.finalproject.Adapters.ReviewListAdapter
@@ -10,16 +9,11 @@ import com.example.finalproject.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_list_of_reviews.*
-import kotlinx.android.synthetic.main.activity_review.*
-import kotlinx.android.synthetic.main.fragment_trending.*
-import kotlinx.android.synthetic.main.fragment_watchlist.*
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 class ListOfReviewsActivity : AppCompatActivity() {
 
     private lateinit var db: FirebaseFirestore
-    var reviewList : ArrayList<String> = ArrayList<String>()
+    var reviewList : ArrayList<String> = ArrayList()
     var rating : Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +35,6 @@ class ListOfReviewsActivity : AppCompatActivity() {
         movieReviewsTitle.text = movieTitle
 
         val recyclerView = findViewById<RecyclerView>(R.id.reviewsRecyclerView)
-
 
         db.collection("movies").document(movieId.toString()).get().addOnSuccessListener {
             //If our document exists

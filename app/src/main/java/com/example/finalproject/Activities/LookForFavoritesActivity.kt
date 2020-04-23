@@ -10,15 +10,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalproject.APIViewModel
 import com.example.finalproject.Adapters.AddToFavoritesAdapter
-import com.example.finalproject.Adapters.MovieListAdapter
 import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
 import kotlinx.android.synthetic.main.activity_look_for_favorites.*
-import kotlinx.android.synthetic.main.fragment_search.*
 
 class LookForFavoritesActivity : AppCompatActivity() {
-
-    var posterToUpdate = -1
 
     lateinit var viewModel: APIViewModel
     var movieList: ArrayList<Movie> = ArrayList()
@@ -26,8 +22,6 @@ class LookForFavoritesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_look_for_favorites)
-
-        posterToUpdate = intent.getIntExtra("posterToUpdate", -1)
 
         // api viewmodel
         viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
@@ -69,8 +63,14 @@ class LookForFavoritesActivity : AppCompatActivity() {
     fun openMovie(id : Int){
         val intent = Intent(this, SingleMovieActivity::class.java)
         intent.putExtra("id", id)
-        intent.putExtra("posterToUpdate", posterToUpdate)
-        startActivity(intent)
-        finish()
+        intent.putExtra("favorites", 1)
+        startActivityForResult(intent, 12345)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == 123456){
+            finish()
+        }
     }
 }

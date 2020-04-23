@@ -23,14 +23,13 @@ class SingleMovieActivity() :  AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
-    private var watchlist = ArrayList<Int>()
-    private var favorites = ArrayList<Int>()
+    private var watchlist = ArrayList<Long>()
+    private var favorites = ArrayList<Long>()
     private var hasReviewed = false
     private var hasRated = false
     private var updating = false
 
-    //For adding favorite movies:
-    var posterToUpdate = -1
+    private val result_finished = 123456
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,14 +60,14 @@ class SingleMovieActivity() :  AppCompatActivity() {
             db.collection("users").document(uid).get().addOnSuccessListener {
                 if (it.exists()) {
                     if (it.contains("watchlist")) {
-                        watchlist = it.get("watchlist") as ArrayList<Int>
-                        if (watchlist.contains(movie.id)){
+                        watchlist = it.get("watchlist") as ArrayList<Long>
+                        if (watchlist.contains(movie.id.toLong())){
                             addToWatchlistButton.text = "Remove from watchlist"
                         }
                     }
                     if (it.contains("favorites")){
-                        favorites = it.get("favorites") as ArrayList<Int>
-                        if (favorites.contains(movie.id)){
+                        favorites = it.get("favorites") as ArrayList<Long>
+                        if (favorites.contains(movie.id.toLong())){
                             addToFavoritesButton.text = "Remove from favorites"
                         }
                     }
@@ -117,9 +116,9 @@ class SingleMovieActivity() :  AppCompatActivity() {
 
         })
 
-        posterToUpdate = intent.getIntExtra("posterToUpdate", -1)
+        val doFavorites = intent.getIntExtra("favorites", -1)
         //Then we sent a request to update our favorite list
-        if(posterToUpdate != -1){
+        if(doFavorites != -1){
             singleMovieCancelButton.text = "Cancel"
             seeReviewsButton.visibility = View.GONE
             addToWatchlistButton.visibility = View.GONE
@@ -156,7 +155,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
         val uid = auth.currentUser!!.email!!
         if (!updating){
             updating = true
-            if(favorites.remove(movie.id)){
+            if(favorites.remove(movie.id.toLong())){
                 db.collection("users").document(uid).update("favorites", favorites).addOnSuccessListener {
                     val toast = Toast.makeText(
                         this,
@@ -165,10 +164,11 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     )
                     toast.show()
                     updating = false
+                    setResult(result_finished, intent)
                     finish()
                 }
             }else{
-                favorites.add(movie.id)
+                favorites.add(movie.id.toLong())
                 db.collection("users").document(uid).update("favorites", favorites).addOnSuccessListener {
                     val toast = Toast.makeText(
                         this,
@@ -177,6 +177,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     )
                     toast.show()
                     updating = false
+                    setResult(result_finished, intent)
                     finish()
                 }
             }
@@ -187,7 +188,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
         if (!updating){
             val uid = auth.currentUser!!.email!!
             updating = true
-            if(watchlist.remove(movie.id)){
+            if(watchlist.remove(movie.id.toLong())){
                 db.collection("users").document(uid).update("watchlist", watchlist).addOnSuccessListener {
                     val toast = Toast.makeText(
                         this,
@@ -199,7 +200,7 @@ class SingleMovieActivity() :  AppCompatActivity() {
                     updating = false
                 }
             }else{
-                watchlist.add(movie.id)
+                watchlist.add(movie.id.toLong())
                 db.collection("users").document(uid).update("watchlist", watchlist).addOnSuccessListener {
                     val toast = Toast.makeText(
                         this,

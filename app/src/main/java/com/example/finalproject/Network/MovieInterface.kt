@@ -1,9 +1,7 @@
 package com.example.finalproject.Network
 
-import android.text.method.MovementMethod
 import com.example.finalproject.Data.Movie
 import com.example.finalproject.Data.MoviePayload
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
