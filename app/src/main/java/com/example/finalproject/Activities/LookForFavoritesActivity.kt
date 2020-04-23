@@ -1,5 +1,6 @@
 package com.example.finalproject.Activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -8,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalproject.APIViewModel
+import com.example.finalproject.Adapters.AddToFavoritesAdapter
 import com.example.finalproject.Adapters.MovieListAdapter
 import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
@@ -27,7 +29,6 @@ class LookForFavoritesActivity : AppCompatActivity() {
 
         posterToUpdate = intent.getIntExtra("posterToUpdate", -1)
 
-
         // api viewmodel
         viewModel = ViewModelProvider(this).get(APIViewModel::class.java)
 
@@ -37,7 +38,7 @@ class LookForFavoritesActivity : AppCompatActivity() {
 
         // set up recycler view with grid layout adapter
         val recyclerView = searchForFavoriteRecyclerView
-        val movieAdapter = MovieListAdapter(movieList, this, posterToUpdate)
+        val movieAdapter = AddToFavoritesAdapter(movieList, this)
         recyclerView.adapter = movieAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -57,11 +58,19 @@ class LookForFavoritesActivity : AppCompatActivity() {
         })
     }
 
-    private fun changeInFilter(movieAdpater : MovieListAdapter) {
+    private fun changeInFilter(movieAdpater : AddToFavoritesAdapter) {
         viewModel.movieList.observe(this, Observer {
             movieList.clear()
             movieList.addAll(it)
             movieAdpater.notifyDataSetChanged()
         })
+    }
+
+    fun openMovie(id : Int){
+        val intent = Intent(this, SingleMovieActivity::class.java)
+        intent.putExtra("id", id)
+        intent.putExtra("posterToUpdate", posterToUpdate)
+        startActivity(intent)
+        finish()
     }
 }

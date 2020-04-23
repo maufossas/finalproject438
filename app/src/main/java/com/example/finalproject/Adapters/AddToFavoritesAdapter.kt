@@ -8,12 +8,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalproject.Activities.LookForFavoritesActivity
 import com.example.finalproject.Activities.SingleMovieActivity
 import com.example.finalproject.Data.Movie
 import com.example.finalproject.R
 import com.squareup.picasso.Picasso
 
-class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
+class AddToFavoritesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.movie_item, parent, false)) {
     private val picture : ImageView
     private val title : TextView
@@ -39,26 +40,24 @@ class MovieViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         }
         clickLayout.setOnClickListener{
             // launch the movie activity to view more details
-            val intent = Intent(context, SingleMovieActivity::class.java)
-            intent.putExtra("id", movie.id)
-            context.startActivity(intent)
+            (context as LookForFavoritesActivity).openMovie(movie.id)
         }
     }
 }
 
 //create the listener for the recycler view
-class MovieListAdapter(private val list: ArrayList<Movie>?, var context: Context) : RecyclerView.Adapter<MovieViewHolder>() {
+class AddToFavoritesAdapter(private val list: ArrayList<Movie>?, var context: Context) : RecyclerView.Adapter<AddToFavoritesViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddToFavoritesViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return MovieViewHolder(
+        return AddToFavoritesViewHolder(
             inflater,
             parent
         )
     }
 
     //bind the object
-    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AddToFavoritesViewHolder, position: Int) {
         val event: Movie = list!!.get(position)
         holder.bind(event, context)
     }
